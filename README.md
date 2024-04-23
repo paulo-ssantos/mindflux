@@ -9,7 +9,7 @@
 ![Bitbucket open issues](https://img.shields.io/bitbucket/issues/Paulo-2048/mindflow?style=for-the-badge)
 ![Bitbucket open pull requests](https://img.shields.io/bitbucket/pr-raw/Paulo-2048/mindflow?style=for-the-badge)
 
-<img src="imagem.png" alt="Exemplo imagem">
+<img src="image-logo.jpg" alt="Logo da Imagem">
 
 > O MindFlow é um sistema baseado na web projetado para realizar a gestão do conhecimento por meio do gerenciamento dos processos da empresa. Este projeto foi criado como parte da matéria de Gestão do Conhecimento, sob orientação do professor André Magalhães.
 
