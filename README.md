@@ -80,15 +80,15 @@ Os colaboradores desse projeto foram:
 <table>
   <tr>
     <td align="center">
-      <a href="#" title="defina o titulo do link">
-        <img src="https://avatars3.githubusercontent.com/u/31936044" width="100px;" alt="Foto do Iuri Silva no GitHub"/><br>
+      <a href="" title="defina o titulo do link">
+        <img src="https://avatars.githubusercontent.com/u/130109080?v=4" width="100px;" alt="Foto do Paulo Vitor no GitHub"/><br>
         <sub>
-          <b>Iuri Silva</b>
+          <b>Paulo Vitor</b>
         </sub>
       </a>
     </td>
     <td align="center">
-      <a href="#" title="defina o titulo do link">
+      <a href="https://github.com/paulo-2048" title="Redirecionamento para o perfil de Paulo Vitor">
         <img src="https://s2.glbimg.com/FUcw2usZfSTL6yCCGj3L3v3SpJ8=/smart/e.glbimg.com/og/ed/f/original/2019/04/25/zuckerberg_podcast.jpg" width="100px;" alt="Foto do Mark Zuckerberg"/><br>
         <sub>
           <b>Mark Zuckerberg</b>
