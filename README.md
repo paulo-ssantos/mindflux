@@ -3,11 +3,11 @@
 
 # MindFlow
 
-![GitHub repo size](https://img.shields.io/github/repo-size/Paulo-2048/mindflow?style=for-the-badge)
-![GitHub language count](https://img.shields.io/github/languages/count/Paulo-2048/mindflow?style=for-the-badge)
-![GitHub forks](https://img.shields.io/github/forks/Paulo-2048/mindflow?style=for-the-badge)
-![Bitbucket open issues](https://img.shields.io/bitbucket/issues/Paulo-2048/mindflow?style=for-the-badge)
-![Bitbucket open pull requests](https://img.shields.io/bitbucket/pr-raw/Paulo-2048/mindflow?style=for-the-badge)
+![GitHub repo size](https://img.shields.io/github/repo-size/Paulo-2048/mindflux?style=for-the-badge)
+![GitHub language count](https://img.shields.io/github/languages/count/Paulo-2048/mindflux?style=for-the-badge)
+![GitHub forks](https://img.shields.io/github/forks/Paulo-2048/mindflux?style=for-the-badge)
+![Bitbucket open issues](https://img.shields.io/bitbucket/issues/Paulo-2048/mindflux?style=for-the-badge)
+![Bitbucket open pull requests](https://img.shields.io/bitbucket/pr-raw/Paulo-2048/mindflux?style=for-the-badge)
 
 <img src="image-logo.jpg" alt="Logo da Imagem">
 
