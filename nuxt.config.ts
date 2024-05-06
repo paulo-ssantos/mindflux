@@ -1,7 +1,6 @@
 import { defineNuxtConfig } from 'nuxt/config';
 
 export default defineNuxtConfig({
-  devtools: { enabled: true },
   app: {
     head: {
       meta: [
@@ -13,7 +12,6 @@ export default defineNuxtConfig({
       ]
     }
   },
-
 
   build: {
     transpile: [
