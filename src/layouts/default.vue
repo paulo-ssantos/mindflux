@@ -31,15 +31,15 @@ export default defineComponent({
           label: 'Gerenciar Processos',
           icon: 'pi pi-fw pi-sitemap',
           items: [
-            { label: 'Novo', icon: 'pi pi-fw pi-id-card', to: '/demo/formlayout' },
-            { label: 'Meus Processos', icon: 'pi pi-fw pi-id-card', to: '/demo/formlayout' }
+            { label: 'Novo', icon: 'pi pi-plus', to: '/demo/formlayout' },
+            { label: 'Meus Processos', icon: 'pi pi-folder', to: '/demo/formlayout' }
           ]
         },
         {
           label: 'Acessar Processos',
           icon: 'pi pi-fw pi-sitemap',
           items: [
-            { label: 'Todos os Processos', icon: 'pi pi-fw pi-id-card', to: '/demo/formlayout' },
+            { label: 'Todos os Processos', icon: 'pi pi-folder-open', to: '/demo/formlayout' },
             {
               label: 'Recursos Humanos',
               icon: 'pi pi-fw pi-users',
@@ -47,28 +47,28 @@ export default defineComponent({
             },
             {
               label: 'Tecnologia',
-              icon: 'pi pi-fw pi-bookmark',
+              icon: 'pi pi-desktop',
               to: '#'
             },
             {
               label: 'Adminstração',
-              icon: 'pi pi-fw pi-bookmark',
+              icon: 'pi pi-sitemap',
               to: '#'
             },
             {
               label: 'Comercial',
-              icon: 'pi pi-fw pi-bookmark',
+              icon: 'pi pi-fw pi-wallet',
               to: '#'
             }
           ]
         },
         {
           label: 'Gestão',
-          icon: 'pi pi-fw pi-sitemap',
+          icon: 'pi pi-fw pi-lock',
           items: [
-            { label: 'Gerenciar Usuários', icon: 'pi pi-fw pi-id-card', to: '/demo/formlayout' },
-            { label: 'Gerenciar Processos', icon: 'pi pi-fw pi-id-card', to: '/demo/formlayout' },
-            { label: 'Auditoria', icon: 'pi pi-fw pi-id-card', to: '/demo/formlayout' }
+            { label: 'Gerenciar Usuários', icon: 'pi pi-fw pi-user-edit', to: '/demo/formlayout' },
+            { label: 'Gerenciar Processos', icon: 'pi pi-fw pi-file-edit', to: '/demo/formlayout' },
+            { label: 'Auditoria', icon: 'pi pi-fw pi-history', to: '/demo/formlayout' }
           ]
         },
         {
@@ -81,8 +81,8 @@ export default defineComponent({
                 window.location.href = '/documentation';
               }
             },
-            { label: 'Contatar Suporte', icon: 'pi pi-fw pi-search', url: '#' },
-            { label: 'Sobre', icon: 'pi pi-fw pi-search', url: '#' }
+            { label: 'Contatar Suporte', icon: 'pi pi-envelope', url: '#' },
+            { label: 'Sobre', icon: 'pi pi-fw pi-info-circle', url: '#' }
           ]
         }
       ]
