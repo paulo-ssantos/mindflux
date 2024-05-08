@@ -1,9 +1,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import AppTopBar from '~/components/layouts/default/AppTopbar.vue';
-import AppMenu from '~/components/layouts/default/AppMenu.vue';
 import AppConfig from '~/components/layouts/default/AppConfig.vue';
 import AppFooter from '~/components/layouts/default/AppFooter.vue';
+import AppMenu from '~/components/layouts/default/AppMenu.vue';
+import AppTopBar from '~/components/layouts/default/AppTopbar.vue';
 
 export default defineComponent({
   components: {
@@ -129,7 +129,7 @@ export default defineComponent({
                 window.location.href = '/documentation';
               }
             },
-            { label: 'View Source', icon: 'pi pi-fw pi-search', url: 'https://github.com/who-jonson/sakai-nuxt' }
+            { label: 'View Source', icon: 'pi pi-fw pi-search', url: 'https://github.com/who-jonson/mindflux' }
           ]
         }
       ]
@@ -149,7 +149,8 @@ export default defineComponent({
       }];
     },
     logo() {
-      return (this.$appState.darkTheme) ? '/images/logo-white.svg' : '/images/logo.svg';
+      // return (this.$appState.darkTheme) ? '/images/logo-white.svg' : '/images/logo.svg';
+      return '/images/logo.png';
     }
   },
   watch: {

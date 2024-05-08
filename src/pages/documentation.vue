@@ -7,8 +7,8 @@
 
         <h5>Getting Started</h5>
         <p>
-          Sakai is an application template for Vue based on the <a href="https://cli.vuejs.org/">Vue CLI</a> that provides out-of-the-box standard
-          tooling for Vue projects. To get started, clone the <a href="https://github.com/primefaces/sakai-vue">repository</a> from GitHub and install the dependencies with npm or yarn.
+          Mindflux is an application template for Vue based on the <a href="https://cli.vuejs.org/">Vue CLI</a> that provides out-of-the-box standard
+          tooling for Vue projects. To get started, clone the <a href="https://github.com/primefaces/mindflux-vue">repository</a> from GitHub and install the dependencies with npm or yarn.
         </p>
         <pre v-code.script><code>
 npm install
@@ -24,7 +24,7 @@ yarn install
 
         <p>
           Next step is running the application using the serve script and navigate to <i>http://localhost:8080/</i> to view the application.
-          That is it, you may now start with the development of your application using the Sakai template.
+          That is it, you may now start with the development of your application using the Mindflux template.
         </p>
 
         <pre v-code.script><code>
@@ -51,7 +51,7 @@ yarn dev
 
         <h5>Structure</h5>
         <p>
-          Sakai consists of 2 main parts; the application layout and the resources. <i>app.vue</i> inside src folder is the main component containing the template for the base layout
+          Mindflux consists of 2 main parts; the application layout and the resources. <i>app.vue</i> inside src folder is the main component containing the template for the base layout
           whereas required resources such as SASS structure for the layout are placed inside the <b>src/assets/</b> folder.
         </p>
 
@@ -68,7 +68,7 @@ yarn dev
         </p>
 
         <h5>Dependencies</h5>
-        <p>Dependencies of Sakai are listed below and needs to be added to package.json.</p>
+        <p>Dependencies of Mindflux are listed below and needs to be added to package.json.</p>
 
         <pre v-code.script>
 <code>
@@ -81,7 +81,7 @@ yarn dev
 </code></pre>
 
         <h5>PrimeVue Theme</h5>
-        <p>Sakai uses the free Saga, Arya and Vela themes which are distributed within PrimeVue, however it can be used with any PrimeVue theme as well such as material, tailwind and bootstrap.</p>
+        <p>Mindflux uses the free Saga, Arya and Vela themes which are distributed within PrimeVue, however it can be used with any PrimeVue theme as well such as material, tailwind and bootstrap.</p>
 
         <h5>SASS Variables</h5>
         <p>

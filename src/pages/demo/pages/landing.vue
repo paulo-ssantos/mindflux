@@ -17,7 +17,9 @@ function smoothScroll(id: string) {
   <div class="surface-0 overflow-hidden">
     <div class="py-4 px-4 mx-0 md:mx-6 lg:mx-8 lg:px-8 flex align-items-center justify-content-between relative lg:static">
       <NuxtLink to="/" class="flex align-items-center">
-        <img :src="`/images/logo-${logoColor}.svg`" alt="Sakai Logo" height="50" class="mr-0 lg:mr-2"><span class="text-900 font-medium text-2xl line-height-3 mr-8">SAKAI</span>
+        <!-- <img :src="`/images/logo-${logoColor}.svg`" alt="Mindflux Logo" height="50" class="mr-0 lg:mr-2"> -->
+        <img src="/images/logo.png" alt="Mindflux logo" class="mb-5" style="width:81px; height:60px;">
+        <span class="text-900 font-medium text-2xl line-height-3 mr-8">MINDFLUX</span>
       </NuxtLink>
       <a
         v-ripple
@@ -374,13 +376,18 @@ function smoothScroll(id: string) {
       <div class="grid justify-content-between">
         <div class="col-12 md:col-2" style="margin-top:-1.5rem;">
           <div class="flex flex-wrap align-items-center justify-content-center md:justify-content-start md:mb-0 mb-3">
-            <img
+            <!-- <img
               :src="`/images/logo-${logoColor}.svg`" alt="footer sections" width="50"
+              height="50"
+              class="mr-2"
+            > -->
+            <img
+              src="/images/logo.png" alt="footer sections" width="50"
               height="50"
               class="mr-2"
             >
             <h4 class="font-medium text-3xl text-900">
-              SAKAI
+              MINDFLUX
             </h4>
           </div>
         </div>
