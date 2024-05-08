@@ -17,7 +17,7 @@ function smoothScroll(id: string) {
   <div class="surface-0 overflow-hidden">
     <div class="py-4 px-4 mx-0 md:mx-6 lg:mx-8 lg:px-8 flex align-items-center justify-content-between relative lg:static">
       <NuxtLink to="/" class="flex align-items-center">
-        <img :src="`/images/logo-${logoColor}.svg`" alt="Mindflux Logo" height="50" class="mr-0 lg:mr-2"><span class="text-900 font-medium text-2xl line-height-3 mr-8">SAKAI</span>
+        <img :src="`/images/logo-${logoColor}.svg`" alt="Sakai Logo" height="50" class="mr-0 lg:mr-2"><span class="text-900 font-medium text-2xl line-height-3 mr-8">SAKAI</span>
       </NuxtLink>
       <a
         v-ripple

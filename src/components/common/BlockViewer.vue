@@ -18,7 +18,7 @@ export default {
       default: null
     },
     previewStyle: {
-      type: Object as () => Record<string, string | number>,
+      type: [Array, Object, String],
       default: null
     }
   },
@@ -32,11 +32,11 @@ export default {
     };
   },
   methods: {
-    activateView(event: Event, blockView: number) {
+    activateView(event, blockView) {
       this.blockView = blockView;
       event.preventDefault();
     },
-    async copyCode(event: Event) {
+    async copyCode(event) {
       await navigator.clipboard.writeText(this.code);
       event.preventDefault();
     }

@@ -7,15 +7,14 @@ export default {
     }
   },
   methods: {
-    onMenuToggle(event: Event) {
+    onMenuToggle(event) {
       this.$emit('menuToggle', event);
     },
-    onTopbarMenuToggle(event: Event) {
+    onTopbarMenuToggle(event) {
       this.$emit('topbarMenuToggle', event);
     },
     topbarImage() {
-      // return this.$appState.darkTheme ? '/images/logo-white.svg' : '/images/logo-dark.svg';
-      return '/images/logo.png';
+      return this.$appState.darkTheme ? '/images/logo-white.svg' : '/images/logo-dark.svg';
     }
   }
 };
@@ -25,7 +24,7 @@ export default {
   <div class="layout-topbar">
     <NuxtLink to="/" class="layout-topbar-logo">
       <img alt="Logo" :src="topbarImage()">
-      <span>MindFlux</span>
+      <span>SAKAI</span>
     </NuxtLink>
     <button class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle">
       <i class="pi pi-bars" />

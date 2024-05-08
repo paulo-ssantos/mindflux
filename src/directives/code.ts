@@ -1,8 +1,7 @@
 import Prism from 'prismjs';
-import type { DirectiveBinding } from 'vue'; // Change this line to import VNodeDirective
 
 const CodeHighlight = {
-  beforeMount(el: Element, binding: DirectiveBinding) {
+  beforeMount(el, binding) {
     const modifiers = binding.modifiers;
     const value = binding.value;
 

@@ -14,7 +14,7 @@ export default defineComponent({
   },
   data() {
     return {
-      layoutMode: 'static' as 'static' | 'overlay',
+      layoutMode: 'static',
       menuActive: false,
       menuClick: false,
       staticMenuInactive: false,
@@ -63,7 +63,7 @@ export default defineComponent({
             { label: 'Timeline', icon: 'pi pi-fw pi-calendar', to: '/demo/pages/timeline' },
             { label: 'Landing', icon: 'pi pi-fw pi-calendar', to: '/demo/pages/landing' },
             { label: 'Login', icon: 'pi pi-fw pi-sign-in', to: '/login' },
-            { label: 'Not Found', icon: 'pi pi-fw pi-exclamation-circle', to: '/error' },
+            { label: 'Not Found', icon: 'pi pi-fw pi-exclamation-circle', to: '/notfound' },
             { label: 'Empty', icon: 'pi pi-fw pi-circle-off', to: '/demo/pages/empty' }
           ]
         },
@@ -129,7 +129,7 @@ export default defineComponent({
                 window.location.href = '/documentation';
               }
             },
-            { label: 'View Source', icon: 'pi pi-fw pi-search', url: 'https://github.com/who-jonson/mindflux-nuxt' }
+            { label: 'View Source', icon: 'pi pi-fw pi-search', url: 'https://github.com/who-jonson/sakai-nuxt' }
           ]
         }
       ]
@@ -203,7 +203,7 @@ export default defineComponent({
         this.mobileMenuActive = false;
       }
     },
-    onLayoutChange(layoutMode: 'static' | 'overlay') {
+    onLayoutChange(layoutMode: string) {
       this.layoutMode = layoutMode;
     },
     addClass(element: Element, className: string) {

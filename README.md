@@ -1,117 +1,75 @@
-# mindflow
+#  Sakai Admin Template for Nuxt 3  
 
-
-# MindFlow
-
-![GitHub repo size](https://img.shields.io/github/repo-size/Paulo-2048/mindflux?style=for-the-badge)
-![GitHub language count](https://img.shields.io/github/languages/count/Paulo-2048/mindflux?style=for-the-badge)
-![GitHub forks](https://img.shields.io/github/forks/Paulo-2048/mindflux?style=for-the-badge)
-![Bitbucket open issues](https://img.shields.io/bitbucket/issues/Paulo-2048/mindflux?style=for-the-badge)
-![Bitbucket open pull requests](https://img.shields.io/bitbucket/pr-raw/Paulo-2048/mindflux?style=for-the-badge)
-
-<img src="image-logo.jpg" alt="Logo da Imagem">
-
-> O MindFlow é um sistema baseado na web projetado para realizar a gestão do conhecimento por meio do gerenciamento dos processos da empresa. Este projeto foi criado como parte da matéria de Gestão do Conhecimento, sob orientação do professor André Magalhães.
-
-
-<!---
-### Ajustes e melhorias
-
-O projeto ainda está em desenvolvimento e as próximas atualizações serão voltadas nas seguintes tarefas:
-
-- [x] Tarefa 1
-- [x] Tarefa 2
-- [x] Tarefa 3
-- [ ] Tarefa 4
-- [ ] Tarefa 5
-
-## 💻 Pré-requisitos
-
-Antes de começar, verifique se você atendeu aos seguintes requisitos:
-
-- Você instalou a versão mais recente de `<linguagem / dependência / requeridos>`
-- Você tem uma máquina `<Windows / Linux / Mac>`. Indique qual sistema operacional é compatível / não compatível.
-- Você leu `<guia / link / documentação_relacionada_ao_projeto>`.
-
-## 🚀 Instalando <nome_do_projeto>
-
-Para instalar o <nome_do_projeto>, siga estas etapas:
-
-Linux e macOS:
-
-```
-<comando_de_instalação>
+Visit [Sakai Nuxt](https://sakai-nuxt.vercel.app) website for a live preview. 
+ 
+### Getting Started
+Sakai is an application template for Vue based on the [Vue CLI](https://cli.vuejs.org/) that provides out-of-the-box standard
+tooling for Vue projects. To get started, clone this repository from GitHub and install the dependencies with pnpm or npm or yarn.
+                
+```bash
+pnpm install  # npm install
 ```
 
-Windows:
+or
 
-```
-<comando_de_instalação>
-```
-
-## ☕ Usando <nome_do_projeto>
-
-Para usar <nome_do_projeto>, siga estas etapas:
-
-```
-<exemplo_de_uso>
+```bash
+yarn install
 ```
 
-Adicione comandos de execução e exemplos que você acha que os usuários acharão úteis. Fornece uma referência de opções para pontos de bônus!
+Next step is running the application using the serve script and navigate to **http://localhost:3000/** to view the application.
+That is it, you may now start with the development of your application using the Sakai template.</p>
 
-## 📫 Contribuindo para <nome_do_projeto>
+```bash
+pnpm dev # npm run dev
+```
 
-Para contribuir com <nome_do_projeto>, siga estas etapas:
+or
 
-1. Bifurque este repositório.
-2. Crie um branch: `git checkout -b <nome_branch>`.
-3. Faça suas alterações e confirme-as: `git commit -m '<mensagem_commit>'`
-4. Envie para o branch original: `git push origin <nome_do_projeto> / <local>`
-5. Crie a solicitação de pull.
+```bash
+yarn dev
+```
 
-Como alternativa, consulte a documentação do GitHub em [como criar uma solicitação pull](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request).
+### Nuxi CLI Scripts
+Following commands are derived from create app.
+```
+"pnpm run dev": Starts the development server
+"pnpm run build": Builds the application for deployment.
+"pnpm run generate": Builds the application for static deployment.
+"pnpm run start": Runs the production server.
+```
 
--->
+### Structure
+Sakai consists of 2 main parts; the application layout and the resources. **app.vue** inside src folder is the main component containing the template for the base layout whereas required resources such as SASS structure for the layout are placed inside the **src/assets/** folder.</p>
 
-## 🤝 Colaboradores
+### Layout Components
+Main layout is the template of the **app.vue**, it is divided into a couple of child components such as topbar, menu and footer. Here is template of the
+**app.vue** component that implements the logic such as menu state, layout modes and so on.
 
-Os colaboradores desse projeto foram:
+### Menu
+Menu is a separate component defined in **AppMenu.vue** file based on PrimeVue MenuModel API. In order to define the menuitems,
+navigate to data section of **app.vue** file and define your own model as a nested structure using the **menu** property.
 
-<table>
-  <tr>
-    <td align="center">
-      <a href="" title="defina o titulo do link">
-        <img src="https://avatars.githubusercontent.com/u/130109080?v=4" width="100px;" alt="Foto do Paulo Vitor no GitHub"/><br>
-        <sub>
-          <b>Paulo Vitor</b>
-        </sub>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://github.com/paulo-2048" title="Redirecionamento para o perfil de Paulo Vitor">
-        <img src="https://s2.glbimg.com/FUcw2usZfSTL6yCCGj3L3v3SpJ8=/smart/e.glbimg.com/og/ed/f/original/2019/04/25/zuckerberg_podcast.jpg" width="100px;" alt="Foto do Mark Zuckerberg"/><br>
-        <sub>
-          <b>Mark Zuckerberg</b>
-        </sub>
-      </a>
-    </td>
-    <td align="center">
-      <a href="#" title="defina o titulo do link">
-        <img src="https://miro.medium.com/max/360/0*1SkS3mSorArvY9kS.jpg" width="100px;" alt="Foto do Steve Jobs"/><br>
-        <sub>
-          <b>Steve Jobs</b>
-        </sub>
-      </a>
-    </td>
-  </tr>
-</table>
+### Dependencies
+Dependencies of Sakai are listed below and needs to be added to package.json.
 
-<!---
-## 😄 Seja um dos contribuidores
+```json
+{
+    "primeflex": "3.2.1",
+    "primeicons": "6.0.1",
+    "primevue": "3.17.0"
+}
+```
 
-Quer fazer parte desse projeto? Clique [AQUI](CONTRIBUTING.md) e leia como contribuir.
--->
+### PrimeVue Theme
+Sakai uses the free Saga, Arya and Vela themes which are distributed within PrimeVue, however it can be used with any PrimeVue theme as well such as material, tailwind and bootstrap as layout colors are derived from the theme used via CSS variables.
 
-## 📝 Licença
+### SASS Variables
+In case you'd like to customize the layout variables, open **_variables.scss** file under src/layout folder. The list is pretty short as majority of the variables are derived from the PrimeVue theme being used.
 
-Esse projeto está sob licença APACHE 2.0. Veja o arquivo [LICENÇA](LICENSE) para mais detalhes.
+**src/assets/_variables.scss**
+```css
+$fontSize: 1rem;
+$borderRadius: 12px;
+$transitionDuration: .2s;
+$maskBg: rgba(0, 0, 0, 0.4);
+```

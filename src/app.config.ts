@@ -1,5 +1,5 @@
 export default defineAppConfig({
-  title: 'Mindflux Nuxt',
+  title: 'Sakai Nuxt',
   description: '',
   baseURL: '/'
 });

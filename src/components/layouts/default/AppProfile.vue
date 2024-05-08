@@ -6,7 +6,7 @@ export default {
     };
   },
   methods: {
-    onClick(event: Event) {
+    onClick(event) {
       this.expanded = !this.expanded;
       event.preventDefault();
     }

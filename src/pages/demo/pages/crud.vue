@@ -20,6 +20,7 @@ export default {
       ]
     };
   },
+  productService: null,
   created() {
     this.productService = new ProductService();
     this.initFilters();
