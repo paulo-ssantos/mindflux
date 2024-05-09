@@ -8,7 +8,6 @@ interface Props {
     url: string
   };
 }
-
 const { error } = defineProps<Props>();
 </script>
 

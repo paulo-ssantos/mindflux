@@ -1,7 +1,6 @@
 import { defineNuxtConfig } from 'nuxt/config';
 
 export default defineNuxtConfig({
-
   app: {
     head: {
       meta: [
@@ -72,8 +71,15 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@vite-pwa/nuxt',
     '@nuxtjs/google-fonts',
-    '~/modules/primevue'
+    '~/modules/primevue',
+    '@nuxtjs/supabase'
   ],
+
+  supabase: {
+    redirectOptions: {
+      login: '/login'
+    }
+  },
 
   nitro: {
     experimental: {
