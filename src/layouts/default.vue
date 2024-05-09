@@ -24,7 +24,7 @@ export default defineComponent({
         {
           label: 'Home',
           items: [{
-            label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/dashboard'
+            label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/'
           }]
         },
         {

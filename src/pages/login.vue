@@ -25,7 +25,7 @@ const login = async () => {
     return;
   } else {
     console.log('Login success');
-    router.push('/dashboard');
+    router.push('/');
   }
 };
 

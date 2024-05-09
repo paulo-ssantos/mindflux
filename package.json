@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.43.1",
+    "nuxt3-editorjs": "^1.0.0",
     "pinia": "^2.1.7"
   },
   "devDependencies": {

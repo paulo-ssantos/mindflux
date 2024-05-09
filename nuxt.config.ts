@@ -51,6 +51,13 @@ export default defineNuxtConfig({
     typescriptBundlerResolution: true
   },
 
+  Nuxt3EditorJS: {
+    EditorJsConfig:
+    {
+      placeholder: 'Comece a descrever seu processo...',
+    }
+  },
+
   // @ts-ignore
   googleFonts: {
     families: {
@@ -72,7 +79,8 @@ export default defineNuxtConfig({
     '@vite-pwa/nuxt',
     '@nuxtjs/google-fonts',
     '~/modules/primevue',
-    '@nuxtjs/supabase'
+    '@nuxtjs/supabase',
+    "nuxt3-editorjs"
   ],
 
   supabase: {
@@ -104,6 +112,38 @@ export default defineNuxtConfig({
   },
 
   vite: {
+    optimizeDeps: {
+      include: [
+        '@editorjs/editorjs',
+        '@editorjs/header',
+        '@editorjs/image',
+        '@editorjs/checklist',
+        '@editorjs/link',
+        '@editorjs/raw',
+        '@editorjs/embed',
+        '@editorjs/quote',
+        '@editorjs/nested-list',
+        '@editorjs/paragraph',
+        '@editorjs/table',
+        '@editorjs/attaches',
+        '@editorjs/delimiter',
+        '@editorjs/marker',
+        'editorjs-change-case',
+        'editorjs-hyperlink',
+        '@editorjs/text-variant-tune',
+        '@editorjs/code',
+        '@editorjs/personality',
+        '@editorjs/warning',
+        '@editorjs/inline-code',
+        'editorjs-text-color-plugin',
+        'editorjs-undo',
+        'editorjs-drag-drop',
+        '@calumk/editorjs-columns',
+        'editorjs-text-alignment-blocktune',
+        '@canburaks/text-align-editorjs',
+        'editorjs-html'
+      ]
+    },
     build: {
       sourcemap: false
     },
