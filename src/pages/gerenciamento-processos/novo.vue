@@ -1,7 +1,3 @@
-<script setup>
-const step = ref(0);
-</script>
-
 <template>
   <div class="grid">
     <div class="col-12">
@@ -19,55 +15,58 @@ const step = ref(0);
               <div class="p-fluid formgrid grid">
                 <div class="field col-12 md:col-6">
                   <label for="firstname2">Título</label>
-                  <InputText id="firstname2" type="text" />
+                  <InputText
+                    id="processTitle"
+                    type="text"
+                    v-model="processTitle"
+                  />
                 </div>
                 <div class="field col-12 md:col-6">
                   <label for="lastname2">Categoria</label>
                   <Dropdown
-                    v-model="dropdownValue"
-                    :options="dropdownValues"
-                    option-label="name"
-                    placeholder="Select"
+                    v-model="processCategory"
+                    :options="dropdownCategoria"
+                    empty-message="Nenhuma categoria encontrada"
+                    option-value="id"
+                    option-label="nome"
+                    placeholder="Selecionar Categoria"
                   />
                 </div>
                 <div class="field col-12">
                   <label for="address">Descrição</label>
-                  <Textarea id="address" rows="4" />
+                  <Textarea
+                    id="address"
+                    rows="4"
+                    v-model="processDescription"
+                  />
                 </div>
                 <div class="field col-12">
                   <label for="city">Tags</label>
                   <MultiSelect
-                    v-model="multiselectValue"
-                    :options="multiselectValues"
-                    option-label="name"
+                    v-model="processTags"
+                    :options="multiSelectTags"
+                    option-label="tags"
                     placeholder="Selecionar Tags"
+                    empty-message="Nenhuma tag encontrada"
                     :filter="true"
                   >
                     <template #value="slotProps">
                       <div
                         v-for="option of slotProps.value"
-                        :key="option.code"
+                        :key="option.id"
                         class="inline-flex align-items-center py-1 px-2 bg-primary text-primary border-round mr-2"
                       >
-                        <span
-                          :class="`mr-2 flag flag-${option.code.toLowerCase()}`"
-                          style="width: 18px; height: 12px"
-                        />
-                        <div>{{ option.name }}</div>
+                        <div>{{ option.nome }}</div>
                       </div>
                       <template
                         v-if="!slotProps.value || slotProps.value.length === 0"
                       >
-                        <div class="p-1">Tags</div>
+                        <div class="p-1">Selecionar Tags</div>
                       </template>
                     </template>
                     <template #option="slotProps">
                       <div class="flex align-items-center">
-                        <span
-                          :class="`mr-2 flag flag-${slotProps.option.code.toLowerCase()}`"
-                          style="width: 18px; height: 12px"
-                        />
-                        <div>{{ slotProps.option.name }}</div>
+                        <div>{{ slotProps.option.nome }}</div>
                       </div>
                     </template>
                   </MultiSelect>
@@ -88,7 +87,10 @@ const step = ref(0);
         <div v-if="step == 1">
           <ClientOnly fallback-tag="span" fallback="Carregando o editor...">
             <div class="border-2 border-primary rounded-4xl p-2">
-              <NuxtEditorJs />
+              <NuxtEditorJs
+                v-model:modelValue="processTextContent"
+                :title="processTitle"
+              />
             </div>
           </ClientOnly>
 
@@ -120,11 +122,90 @@ const step = ref(0);
             icon="pi pi-save"
             icon-pos="right"
             class="mr-2 mb-2"
+            @click="saveProcess"
           />
         </div>
       </div>
     </div>
   </div>
 </template>
+
+<script setup>
+// * Importando componentes
+import { useToast } from 'primevue/usetoast';
+
+// * Definindo variáveis
+const supabase = useSupabaseClient();
+const toast = useToast();
+const nuxtApp = useNuxtApp();
+
+// * Controle de estágio do processo
+const step = ref(0);
+
+// * Informações básicas do processo
+const processTitle = ref("");
+const processCategory = ref("");
+const processDescription = ref("");
+const processTags = ref([]);
+const processTextContent = ref({});
+const processDiagramContent = ref({});
+
+// * Populando o dropdowns
+const dropdownCategoria = ref(
+  (await supabase.from("categorias").select()).data,
+);
+const multiSelectTags = ref((await supabase.from("tags").select()).data);
+
+// * Manipulando o editor de texto
+
+
+// * Salvando o processo no banco
+const saveProcess = async () => {
+  toast.add({ severity: 'info', summary: 'Salvando o Processo...', detail: 'Aguarde um momento até salvarmos seu processo.', life: 3000 });
+
+  const userId = (await supabase.auth.getUser()).data.user.id;
+
+  const process = {
+    titulo: processTitle.value,
+    categoria_id: processCategory.value,
+    descricao: processDescription.value,
+    conteudo: processTextContent.value,
+    usuario_id: userId,
+  };
+  
+
+  const { data, error } = await supabase.from("processos").insert([process]).select();
+
+  if (error) {
+    console.error(error);
+
+    toast.add({ severity: 'error', summary: 'Erro ao criar o processo', detail: 'Erro ao criar o processo', life: 3000 });
+  } else {
+    console.log(data);
+
+    const processId = data[0].id;
+
+    for(let i = 0; i < processTags.value.length; i++) {
+      const { data, error } = await supabase.from("processos_tag").insert([
+        {
+          id_processo: processId,
+          id_tag: processTags.value[i].id,
+        },
+      ]);
+
+      if (error) {
+        console.error(error);
+
+        toast.add({ severity: 'error', summary: 'Erro ao criar o processo', detail: 'Erro ao criar o processo', life: 3000 });
+      } else {
+        console.log(data);
+      }
+    }
+    toast.add({ severity: 'success', summary: 'Processo criado com sucesso', detail: 'Processo criado com sucesso', life: 3000 });
+    router.push("/gerenciamento-processos");
+  }
+};
+
+</script>
 
 <style scoped></style>

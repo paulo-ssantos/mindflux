@@ -192,6 +192,7 @@ export default defineComponent({
 
 <template>
   <div :class="containerClass" @click="onWrapperClick">
+    <Toast />
     <AppTopBar @menu-toggle="onMenuToggle" />
     <div class="layout-sidebar" @click="onSidebarClick">
       <AppMenu :model="menu" @menuitem-click="onMenuItemClick" />

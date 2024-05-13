@@ -51,138 +51,152 @@ export default defineNuxtConfig({
     typescriptBundlerResolution: true
   },
 
+  // @ts-ignore
   Nuxt3EditorJS: {
     EditorJsConfig:
     {
       placeholder: 'Comece a descrever seu processo...',
-    }
-  },
+    },
+    EditorJsToolsConfig: {
+      ImageConfig: {
+        isEnabled: true,
+        supportInColumn: true,
+        toolsConfig: {
+          image: {
+            config: {
+              endpoints: "/editorjs/image"
+            }
+        }
+      }
+    },
+  }
+},
 
   // @ts-ignore
   googleFonts: {
-    families: {
-      Inter: true
-    }
-  },
+  families: {
+    Inter: true
+  }
+},
 
   imports: {
-    autoImport: true,
-    addons: {
-      vueTemplate: true
-    }
-  },
+  autoImport: true,
+  addons: {
+    vueTemplate: true
+  }
+},
 
   modules: [
-    'nuxt-icon',
-    '@pinia/nuxt',
-    '@vueuse/nuxt',
-    '@vite-pwa/nuxt',
-    '@nuxtjs/google-fonts',
-    '~/modules/primevue',
-    '@nuxtjs/supabase',
-    "nuxt3-editorjs"
-  ],
+  'nuxt-icon',
+  '@pinia/nuxt',
+  '@vueuse/nuxt',
+  '@vite-pwa/nuxt',
+  '@nuxtjs/google-fonts',
+  '~/modules/primevue',
+  '@nuxtjs/supabase',
+  "nuxt3-editorjs"
+],
 
   supabase: {
-    redirectOptions: {
-      login: '/login'
-    }
-  },
+  redirectOptions: {
+    login: '/login'
+  }
+},
 
   nitro: {
-    experimental: {
-      asyncContext: true
-    },
-
-    future: {
-      nativeSWR: true
-    }
+  experimental: {
+    asyncContext: true
   },
+
+  future: {
+    nativeSWR: true
+  }
+},
 
   postcss: {
-    plugins: {
-      autoprefixer: {}
-    }
-  },
+  plugins: {
+    autoprefixer: {}
+  }
+},
 
   srcDir: 'src/',
 
   typescript: {
-    shim: false
-  },
+  shim: false
+},
 
   vite: {
-    optimizeDeps: {
-      include: [
-        '@editorjs/editorjs',
-        '@editorjs/header',
-        '@editorjs/image',
-        '@editorjs/checklist',
-        '@editorjs/link',
-        '@editorjs/raw',
-        '@editorjs/embed',
-        '@editorjs/quote',
-        '@editorjs/nested-list',
-        '@editorjs/paragraph',
-        '@editorjs/table',
-        '@editorjs/attaches',
-        '@editorjs/delimiter',
-        '@editorjs/marker',
-        'editorjs-change-case',
-        'editorjs-hyperlink',
-        '@editorjs/text-variant-tune',
-        '@editorjs/code',
-        '@editorjs/personality',
-        '@editorjs/warning',
-        '@editorjs/inline-code',
-        'editorjs-text-color-plugin',
-        'editorjs-undo',
-        'editorjs-drag-drop',
-        '@calumk/editorjs-columns',
-        'editorjs-text-alignment-blocktune',
-        '@canburaks/text-align-editorjs',
-        'editorjs-html'
-      ]
-    },
-    build: {
-      sourcemap: false
-    },
-    clearScreen: true,
-    logLevel: 'info'
+  optimizeDeps: {
+    include: [
+      '@editorjs/editorjs',
+      '@editorjs/header',
+      '@editorjs/image',
+      '@editorjs/checklist',
+      '@editorjs/link',
+      '@editorjs/raw',
+      '@editorjs/embed',
+      '@editorjs/quote',
+      '@editorjs/nested-list',
+      '@editorjs/paragraph',
+      '@editorjs/table',
+      '@editorjs/attaches',
+      '@editorjs/delimiter',
+      '@editorjs/marker',
+      'editorjs-change-case',
+      'editorjs-hyperlink',
+      '@editorjs/text-variant-tune',
+      '@editorjs/code',
+      '@editorjs/personality',
+      '@editorjs/warning',
+      '@editorjs/inline-code',
+      'editorjs-text-color-plugin',
+      'editorjs-undo',
+      'editorjs-drag-drop',
+      '@calumk/editorjs-columns',
+      'editorjs-text-alignment-blocktune',
+      '@canburaks/text-align-editorjs',
+      'editorjs-html'
+    ]
   },
+  build: {
+    sourcemap: false
+  },
+  clearScreen: true,
+  logLevel: 'info'
+},
 
   pwa: {
-    workbox: {
-      runtimeCaching: [
-        {
-          urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-          handler: 'CacheFirst',
-          options: {
-            cacheName: 'google-fonts-cache',
-            expiration: {
-              maxEntries: 10,
-              maxAgeSeconds: 60 * 60 * 24 * 365 // <== 365 days
-            },
-            cacheableResponse: {
-              statuses: [0, 200]
-            }
-          }
-        },
-        {
-          urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-          handler: 'CacheFirst',
-          options: {
-            cacheName: 'gstatic-fonts-cache',
-            expiration: {
-              maxEntries: 10,
-              maxAgeSeconds: 60 * 60 * 24 * 365 // <== 365 days
-            },
-            cacheableResponse: {
-              statuses: [0, 200]
-            }
+  workbox: {
+    runtimeCaching: [
+      {
+        urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+        handler: 'CacheFirst',
+        options: {
+          cacheName: 'google-fonts-cache',
+          expiration: {
+            maxEntries: 10,
+            maxAgeSeconds: 60 * 60 * 24 * 365 // <== 365 days
+          },
+          cacheableResponse: {
+            statuses: [0, 200]
           }
         }
-      ]
-    }
+      },
+      {
+        urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+        handler: 'CacheFirst',
+        options: {
+          cacheName: 'gstatic-fonts-cache',
+          expiration: {
+            maxEntries: 10,
+            maxAgeSeconds: 60 * 60 * 24 * 365 // <== 365 days
+          },
+          cacheableResponse: {
+            statuses: [0, 200]
+          }
+        }
+      }
+    ]
   }
+}
 });
