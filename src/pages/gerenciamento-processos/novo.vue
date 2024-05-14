@@ -24,6 +24,7 @@
                 <div class="field col-12 md:col-6">
                   <label for="lastname2">Categoria</label>
                   <Dropdown
+                    id="processCategory"
                     v-model="processCategory"
                     :options="dropdownCategoria"
                     empty-message="Nenhuma categoria encontrada"
@@ -80,17 +81,15 @@
             icon="pi pi-arrow-right"
             icon-pos="right"
             class="mr-2 mb-2"
-            @click="step++"
+            type="submit"
+            @click="verifySteps"
           />
         </div>
 
         <div v-if="step == 1">
           <ClientOnly fallback-tag="span" fallback="Carregando o editor...">
             <div class="border-2 border-primary rounded-4xl p-2">
-              <NuxtEditorJs
-                v-model:modelValue="processTextContent"
-                :title="processTitle"
-              />
+              <NuxtEditorJs v-model:modelValue="processTextContent" />
             </div>
           </ClientOnly>
 
@@ -105,12 +104,16 @@
             icon="pi pi-arrow-right"
             icon-pos="right"
             class="mr-2 mb-2"
-            @click="step++"
+            @click="verifySteps"
           />
         </div>
 
         <div v-if="step == 2">
-          <h1>DIAGRAMA</h1>
+          <ClientOnly fallback-tag="span" fallback="Carregando o editor...">
+            <div class="border-2 border-primary rounded-4xl p-2">
+              <div id="drawflow"></div>
+            </div>
+          </ClientOnly>
           <Button
             label="Voltar"
             icon="pi pi-arrow-left"
@@ -130,14 +133,15 @@
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 // * Importando componentes
-import { useToast } from 'primevue/usetoast';
+import { useToast } from "primevue/usetoast";
+import Drawflow from "drawflow";
+import styleDrawflow from "drawflow/dist/drawflow.min.css";
 
 // * Definindo variáveis
 const supabase = useSupabaseClient();
 const toast = useToast();
-const nuxtApp = useNuxtApp();
 
 // * Controle de estágio do processo
 const step = ref(0);
@@ -158,10 +162,62 @@ const multiSelectTags = ref((await supabase.from("tags").select()).data);
 
 // * Manipulando o editor de texto
 
+// * Verificar Campos
+const verifySteps = () => {
+  switch (step.value) {
+    case 0: // Informações básica
+      const processTitleElement = document.getElementById(
+        "processTitle",
+      ) as HTMLInputElement;
+      const processCategoryElement = document.getElementById(
+        "processCategory",
+      ) as HTMLInputElement;
+
+      processTitle.value === ""
+        ? processTitleElement.classList.add("p-invalid")
+        : processTitleElement.classList.remove("p-invalid");
+      processCategory.value === ""
+        ? processCategoryElement.classList.add("p-invalid")
+        : processCategoryElement.classList.remove("p-invalid");
+      if (processTitle.value === "" || processCategory.value === "") {
+        toast.add({
+          severity: "error",
+          summary: "Campos obrigatórios",
+          detail: "Preencha todos os campos obrigatórios",
+          life: 3000,
+        });
+      } else {
+        step.value++;
+      }
+
+      break;
+
+    case 1: // Editor de texto
+      step.value++;
+
+      var drawFlowElement = document.getElementById("drawflow");
+      const editor = new Drawflow(drawFlowElement);
+      
+      editor.start();
+      break;
+
+    case 2: // Diagrama
+      step.value++;
+      break;
+
+    default:
+      break;
+  }
+};
 
 // * Salvando o processo no banco
 const saveProcess = async () => {
-  toast.add({ severity: 'info', summary: 'Salvando o Processo...', detail: 'Aguarde um momento até salvarmos seu processo.', life: 3000 });
+  toast.add({
+    severity: "info",
+    summary: "Salvando o Processo...",
+    detail: "Aguarde um momento até salvarmos seu processo.",
+    life: 3000,
+  });
 
   const userId = (await supabase.auth.getUser()).data.user.id;
 
@@ -172,20 +228,27 @@ const saveProcess = async () => {
     conteudo: processTextContent.value,
     usuario_id: userId,
   };
-  
 
-  const { data, error } = await supabase.from("processos").insert([process]).select();
+  const { data, error } = await supabase
+    .from("processos")
+    .insert([process])
+    .select();
 
   if (error) {
     console.error(error);
 
-    toast.add({ severity: 'error', summary: 'Erro ao criar o processo', detail: 'Erro ao criar o processo', life: 3000 });
+    toast.add({
+      severity: "error",
+      summary: "Erro ao criar o processo",
+      detail: "Erro ao criar o processo",
+      life: 3000,
+    });
   } else {
     console.log(data);
 
     const processId = data[0].id;
 
-    for(let i = 0; i < processTags.value.length; i++) {
+    for (let i = 0; i < processTags.value.length; i++) {
       const { data, error } = await supabase.from("processos_tag").insert([
         {
           id_processo: processId,
@@ -196,16 +259,25 @@ const saveProcess = async () => {
       if (error) {
         console.error(error);
 
-        toast.add({ severity: 'error', summary: 'Erro ao criar o processo', detail: 'Erro ao criar o processo', life: 3000 });
+        toast.add({
+          severity: "error",
+          summary: "Erro ao criar o processo",
+          detail: "Erro ao criar o processo",
+          life: 3000,
+        });
       } else {
         console.log(data);
       }
     }
-    toast.add({ severity: 'success', summary: 'Processo criado com sucesso', detail: 'Processo criado com sucesso', life: 3000 });
-    router.push("/gerenciamento-processos");
+
+    toast.add({
+      severity: "success",
+      summary: "Processo criado com sucesso",
+      detail: "Processo criado com sucesso",
+      life: 3000,
+    });
   }
 };
-
 </script>
 
 <style scoped></style>

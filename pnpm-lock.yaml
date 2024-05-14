@@ -12,6 +12,9 @@ dependencies:
   '@supabase/supabase-js':
     specifier: ^2.43.1
     version: 2.43.1
+  drawflow:
+    specifier: ^0.0.59
+    version: 0.0.59
   nuxt3-editorjs:
     specifier: ^1.0.0
     version: 1.0.0
@@ -38,6 +41,9 @@ devDependencies:
   '@testing-library/vue':
     specifier: latest
     version: 8.0.1(@vue/compiler-sfc@3.3.8)(vue@3.3.8)
+  '@types/drawflow':
+    specifier: ^0.0.11
+    version: 0.0.11
   '@types/node':
     specifier: ^20.10.0
     version: 20.10.0
@@ -3564,6 +3570,10 @@ packages:
       '@types/node': 20.10.0
     dev: false
 
+  /@types/drawflow@0.0.11:
+    resolution: {integrity: sha512-FkfkC0GUZJ6gEhwKR3WU0weiSwEfERiA0y6RD3t/RHsAqHZTh9jxG2BqFniFDxuiseD4W0yXxxsAphT2jdbXjQ==}
+    dev: true
+
   /@types/editorjs__header@2.6.3:
     resolution: {integrity: sha512-Z6xroWfklSjsiJhaqZd/94lV7h31T2894GCvUjqB8C7UjOn/1yHfTnv1teBIyEjRxmGo5DB0nLyDwyRnhD587A==}
     dev: false
@@ -5646,6 +5656,10 @@ packages:
     resolution: {integrity: sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==}
     engines: {node: '>=12'}
     dev: true
+
+  /drawflow@0.0.59:
+    resolution: {integrity: sha512-HJM/8trYzignViTMzUSpskRclDhE62jM6oxjgqEJQBbkX9QvDG7JJwRlvdjqnjfL192Pdb0aIysrZMUqG8/vyg==}
+    dev: false
 
   /duplexer@0.1.2:
     resolution: {integrity: sha512-jtD6YG370ZCIi/9GTaJKQxWTZD045+4R4hTk/x1UyoqadyJ9x9CgSi1RlVDQF8U2sxLLSnFkCaMihqljHIWgMg==}
