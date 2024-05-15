@@ -10,6 +10,7 @@
         <div v-for="processo in processos" :key="processo.id">
           {{ processo }}
         </div>
+
       </div>
     </div>
   </div>
