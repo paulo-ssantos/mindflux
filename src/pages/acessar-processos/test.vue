@@ -161,7 +161,7 @@
           <Tag :value="data.status" :severity="getSeverity(data.status)" />
         </template>
         <template #filter="{ filterModel }">
-          <Dropdown
+          <MultiSelect
             v-model="filterModel.value"
             :options="statuses"
             placeholder="Select One"
@@ -174,7 +174,7 @@
                 :severity="getSeverity(slotProps.option)"
               />
             </template>
-          </Dropdown>
+          </MultiSelect>
         </template>
       </Column>
       <Column
@@ -219,6 +219,7 @@
           <TriStateCheckbox
             v-model="filterModel.value"
             inputId="verified-filter"
+            :onchange="verificarFiltroDiagrama(filterModel.value)"
           />
         </template>
       </Column>

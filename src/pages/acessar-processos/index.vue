@@ -12,6 +12,7 @@
           <DataTable
             v-model:filters="filters"
             :value="processos"
+            :onchange="console.log('FILTERS = ', filters)"
             paginator
             showGridlines
             :rows="10"
@@ -57,12 +58,12 @@
             </Column>
             <Column
               header="Categoria"
-              filterField="categoria"
+              filterField="categorias.nome"
               style="min-width: 12rem"
             >
               <template #body="{ data }">
                 <div class="flex align-items-center gap-2">
-                  <span>{{ formatarCategoria(data.categoria_id) }}</span>
+                  <span>{{ data.categorias.nome }}</span>
                 </div>
               </template>
               <template #filter="{ filterModel }">
@@ -97,23 +98,28 @@
               style="min-width: 12rem"
             >
               <template #body="{ data }">
-                <Tag v-for="tag in getTags(data.id)" :value="tag.tags.nome" />
+                <Tag
+                  v-for="tag in data.tags"
+                  :value="tag.tags.nome"
+                  class="p-2 m-2 transition-all"
+                />
               </template>
               <template #filter="{ filterModel }">
-                <Dropdown
+                <MultiSelect
                   v-model="filterModel.value"
-                  :options="tags"
-                  placeholder="Selecione uma"
+                  :options="allTags"
+                  placeholder="Selecione as tags"
                   class="p-column-filter"
+                  option-label="nome"
+                  :onchange="
+                    console.log('TAG FIELD FILTER = ', filterModel.value)
+                  "
                   showClear
                 >
                   <template #option="slotProps">
-                    <Tag
-                      :value="slotProps.option"
-                      :severity="getSeverity(slotProps.option)"
-                    />
+                    <Tag :value="slotProps.option.nome" />
                   </template>
-                </Dropdown>
+                </MultiSelect>
               </template>
             </Column>
             <Column
@@ -133,12 +139,12 @@
                 ></i>
               </template>
               <template #filter="{ filterModel }">
-                <label for="verified-filter" class="font-bold">
-                  Verified
+                <label for="diagrama-filter" class="font-bold">
+                  Diagrama
                 </label>
                 <TriStateCheckbox
                   v-model="filterModel.value"
-                  inputId="verified-filter"
+                  inputId="diagrama-filter"
                 />
               </template>
             </Column>
@@ -156,19 +162,34 @@ import { FilterMatchMode, FilterOperator } from "primevue/api";
 // * Definindo variáveis
 const supabase = useSupabaseClient();
 const filters = ref();
-const processos = ref();
+const processos = ref([]);
 const categorias = ref([]);
-const tags = ref([]);
+const processosTags = ref([]);
+const allTags = ref([]);
 const loading = ref(true);
 
 // * Carregando dados
 onMounted(() => {
   supabase
     .from("processos")
-    .select()
+    .select("*, categorias:categoria_id(*)")
     .then(({ data }) => {
       processos.value = data;
       loading.value = false;
+
+      supabase
+        .from("processos_tag")
+        .select("*, tags:id_tag(*)")
+        .then(({ data }) => {
+          processosTags.value = data;
+
+          processos.value = processos.value.map((processo) => {
+            processo.tags = getTags(processo.id);
+            return processo;
+          });
+
+          console.log("NOVO PROCESSO = ", processos.value);
+        });
     });
 
   supabase
@@ -179,13 +200,11 @@ onMounted(() => {
     });
 
   supabase
-    .from("processos_tag")
-    .select("*, tags:id_tag(*)")
+    .from("tags")
+    .select()
     .then(({ data }) => {
-      tags.value = data;
+      allTags.value = data;
     });
-
-  console.log(processos.value);
 });
 
 const initFilters = () => {
@@ -195,13 +214,13 @@ const initFilters = () => {
       operator: FilterOperator.AND,
       constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
     },
-    categoria: {
+    "categorias.nome": {
       operator: FilterOperator.AND,
       constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
     },
     tags: {
-      operator: FilterOperator.AND,
-      constraints: [{ value: null, matchMode: FilterMatchMode.IN }],
+      operator: FilterOperator.OR,
+      constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
     },
     diagrama: { value: null, matchMode: FilterMatchMode.EQUALS },
   };
@@ -210,11 +229,11 @@ const initFilters = () => {
 initFilters();
 
 const formatarCategoria = (id) => {
-  return (categorias.value.find((categoria) => categoria.id === id)).nome;
+  return categorias.value.find((categoria) => categoria.id === id).nome;
 };
 
 const getTags = (processoId) => {
-  return tags.value.filter((tag) => tag.id_processo === processoId);
+  return processosTags.value.filter((tag) => tag.id_processo === processoId);
 };
 
 const clearFilter = () => {
