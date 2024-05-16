@@ -14,7 +14,7 @@ export default defineComponent({
   },
   data() {
     return {
-      layoutMode: "static",
+      layoutMode: "overlay", // overlay, static
       menuActive: false,
       menuClick: false,
       staticMenuInactive: false,
