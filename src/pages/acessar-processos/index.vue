@@ -19,7 +19,7 @@
             dataKey="id"
             filterDisplay="menu"
             :loading="loading"
-            :globalFilterFields="['titulo', 'categoria', 'tags', 'diagrama']"
+            :globalFilterFields="['titulo', 'categoria', 'diagrama']"
           >
             <template #header>
               <div class="flex justify-content-between">
@@ -91,35 +91,13 @@
                 ></Button>
               </template>
             </Column>
-            <Column
-              header="Tags"
-              field="tags"
-              :filterMenuStyle="{ width: '14rem' }"
-              style="min-width: 12rem"
-            >
+            <Column header="Tags" field="tags" style="min-width: 12rem">
               <template #body="{ data }">
                 <Tag
                   v-for="tag in data.tags"
                   :value="tag.tags.nome"
                   class="p-2 m-2 transition-all"
                 />
-              </template>
-              <template #filter="{ filterModel }">
-                <MultiSelect
-                  v-model="filterModel.value"
-                  :options="allTags"
-                  placeholder="Selecione as tags"
-                  class="p-column-filter"
-                  option-label="nome"
-                  :onchange="
-                    console.log('TAG FIELD FILTER = ', filterModel.value)
-                  "
-                  showClear
-                >
-                  <template #option="slotProps">
-                    <Tag :value="slotProps.option.nome" />
-                  </template>
-                </MultiSelect>
               </template>
             </Column>
             <Column
@@ -136,11 +114,12 @@
                     'pi-check-circle text-green-500 ': data.diagrama,
                     'pi-times-circle text-red-500': !data.diagrama,
                   }"
-                ></i>
+                >
+                </i>
               </template>
               <template #filter="{ filterModel }">
                 <label for="diagrama-filter" class="font-bold">
-                  Diagrama
+                  Contém Diagrama?
                 </label>
                 <TriStateCheckbox
                   v-model="filterModel.value"
@@ -168,6 +147,8 @@ const processosTags = ref([]);
 const allTags = ref([]);
 const loading = ref(true);
 
+const adminAuthClient = supabase.auth.admin;
+
 // * Carregando dados
 onMounted(() => {
   supabase
@@ -176,6 +157,20 @@ onMounted(() => {
     .then(({ data }) => {
       processos.value = data;
       loading.value = false;
+
+      // convert diagrama to boolean
+      processos.value = processos.value.map((processo) => {
+        processo.diagrama = convertDiagramaToBoolean(processo.diagrama);
+        return processo;
+      });
+
+      // get user
+      processos.value = processos.value.map((processo) => {
+        processo.user = getUser(processo.user_id);
+        return processo;
+      });
+
+      console.log("PROCESSOS = ", processos.value);
 
       supabase
         .from("processos_tag")
@@ -218,22 +213,28 @@ const initFilters = () => {
       operator: FilterOperator.AND,
       constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
     },
-    tags: {
-      operator: FilterOperator.OR,
-      constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
-    },
     diagrama: { value: null, matchMode: FilterMatchMode.EQUALS },
   };
 };
 
 initFilters();
 
-const formatarCategoria = (id) => {
-  return categorias.value.find((categoria) => categoria.id === id).nome;
+const convertDiagramaToBoolean = (diagramaContent) => {
+  // Assuming diagramaContent can be null, an object, or undefined,
+  // and we consider it true if it's not null or undefined.
+  return diagramaContent !== null && diagramaContent !== undefined;
 };
 
 const getTags = (processoId) => {
   return processosTags.value.filter((tag) => tag.id_processo === processoId);
+};
+
+const getUser = async (userId) => {
+  const user = await supabase.auth.admin.getUserById(userId);
+
+  console.log("USER = ", user);
+
+  return user;
 };
 
 const clearFilter = () => {
