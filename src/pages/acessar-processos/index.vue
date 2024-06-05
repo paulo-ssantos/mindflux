@@ -44,7 +44,15 @@
             <template #loading> Carregando... </template>
             <Column field="titulo" header="Título" style="min-width: 12rem">
               <template #body="{ data }">
-                {{ data.titulo }}
+                <div class="flex hover:underline">
+                  <RouterLink
+                    :to="`/processo/${data.id}`"
+                    class="text-primary-500"
+                  >
+                    <Icon name="prime:angle-right" class="h-full" />
+                    {{ data.titulo }}
+                  </RouterLink>
+                </div>
               </template>
               <template #filter="{ filterModel }">
                 <InputText
@@ -152,6 +160,8 @@ import { FilterMatchMode, FilterOperator } from "primevue/api";
 
 // * Definindo variáveis
 const supabase = useSupabaseClient();
+const router = useRouter();
+
 const filters = ref();
 const processos = ref([]);
 const categorias = ref([]);
