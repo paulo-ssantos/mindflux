@@ -1,7 +1,6 @@
 <script setup>
 import { useToast } from "primevue/usetoast";
 
-// * Definindo variáveis
 const supabase = useSupabaseClient();
 const filters = ref({ global: { value: null } });
 const toast = useToast();
@@ -20,19 +19,80 @@ const cadastrarCargo = ref("");
 const users = ref([]);
 const selectedUsers = ref([]);
 
-
+// Funções para abrir e fechar diálogos
 function openNew() {
-  showDialog.value = true; // Abre o diálogo
+  showDialog.value = true;
+  selectedUser.value = null;
+  resetForm();
+}
+
+function openEdit(user) {
+  showDialog.value = true;
+  selectedUser.value = user;
+  cadastrarNome.value = user.nome;
+  cadastrarEmail.value = user.email;
+  cadastrarSenha.value = ""; // Não preencher a senha por segurança
+  cadastrarConfirmarSenha.value = ""; // Não preencher a senha por segurança
+  cadastrarCargo.value = user.cargo;
 }
 
 function hideDialog() {
-  showDialog.value = false; // Fecha o diálogo
-  submitted.value = false; // Reseta o estado enviado
+  showDialog.value = false; 
+  submitted.value = false;
+  resetForm();
+}
+
+function resetForm() {
   cadastrarNome.value = "";
   cadastrarEmail.value = "";
   cadastrarSenha.value = "";
   cadastrarConfirmarSenha.value = "";
   cadastrarCargo.value = "";
+}
+
+// Funções CRUD
+async function editUser() {
+  submitted.value = true;
+
+  if (cadastrarSenha.value !== cadastrarConfirmarSenha.value) {
+    toast.add({
+      severity: "error",
+      summary: "Erro",
+      detail: "As senhas não coincidem",
+    });
+    return;
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .update({
+        nome: cadastrarNome.value,
+        email: cadastrarEmail.value,
+        cargo: cadastrarCargo.value,
+      })
+      .eq('id', selectedUser.value.id);
+
+    if (error) {
+      throw error;
+    }
+
+    console.log("Usuário atualizado");
+    hideDialog();
+    toast.add({
+      severity: "success",
+      summary: "Sucesso",
+      detail: "Usuário atualizado com sucesso",
+    });
+    fetchUsers();
+  } catch (error) {
+    console.error("Erro ao atualizar usuário:", error.message);
+    toast.add({
+      severity: "error",
+      summary: "Erro",
+      detail: "Erro ao atualizar usuário",
+    });
+  }
 }
 
 async function saveUser() {
@@ -47,10 +107,7 @@ async function saveUser() {
     return;
   }
 
-  const cargo =
-    cadastrarCargo.value === "Administrador" ? "Administrador" : "Funcionário";
-
-    try {
+  try {
     const { data, error } = await supabase.auth.signUp({
       email: cadastrarEmail.value,
       password: cadastrarSenha.value,
@@ -67,7 +124,6 @@ async function saveUser() {
     }
 
     console.log("Usuário salvo:", data);
-    showDialog.value = false; // Fecha o diálogo após salvar
     hideDialog();
     toast.add({
       severity: "success",
@@ -84,7 +140,6 @@ async function saveUser() {
     });
   }
 }
-
 
 async function fetchUsers() {
   try {
@@ -116,70 +171,62 @@ async function deleteUser() {
       throw error;
     }
 
-    // Exibir mensagem de sucesso
     toast.add({
       severity: "success",
       summary: "Sucesso",
       detail: "Usuário excluído com sucesso",
     });
+    fetchUsers();
   } catch (error) {
     console.error("Erro ao excluir usuário:", error.message);
-    // Exibir mensagem de erro
     toast.add({
       severity: "error",
       summary: "Erro",
       detail: "Erro ao excluir usuário",
     });
   } finally {
-    // Fechar o diálogo de exclusão de usuário
     deleteUserDialog.value = false;
   }
 }
-
 
 async function deleteSelectedUsers() {
   try {
     const idsToDelete = selectedUsers.value.map(user => user.id);
     const { error } = await supabase.from('users').delete().in('id', idsToDelete);
 
-
     if (error) {
       throw error;
     }
 
-    // Exibir mensagem de sucesso
     toast.add({
       severity: "success",
       summary: "Sucesso",
       detail: "Usuários selecionados excluídos com sucesso",
     });
+    fetchUsers();
   } catch (error) {
     console.error("Erro ao excluir usuários selecionados:", error.message);
-    // Exibir mensagem de erro
     toast.add({
       severity: "error",
       summary: "Erro",
       detail: "Erro ao excluir usuários selecionados",
     });
   } finally {
-    // Fechar o diálogo de exclusão de usuários
     deleteUsersDialog.value = false;
   }
 }
-
-
-
-
 
 function confirmDeleteUser(user) {
   selectedUser.value = user;
   deleteUserDialog.value = true;
 }
 
-
 function confirmDeleteSelected() {
   deleteUsersDialog.value = true;
 }
+
+
+
 
 onMounted(() => {
   fetchUsers();
@@ -194,7 +241,6 @@ onMounted(() => {
         <Toolbar class="mb-4">
           <template #start>
             <div class="my-2">
-              <h1></h1>
               <Button
                 label="Cadastrar Usuário"
                 icon="pi pi-plus"
@@ -221,68 +267,69 @@ onMounted(() => {
         </Toolbar>
 
         <DataTable
-        ref="dt"
-        v-model:selection="selectedUsers"
-        :value="users"
-        data-key="id"
-        :paginator="true"
-        :rows="10"
-        :filters="filters"
-        paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-        :rows-per-page-options="[5, 10, 25]"
-        current-page-report-template="Showing {first} to {last} of {totalRecords} users"
-        responsive-layout="scroll"
-      >
-        <template #header>
-          <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
-            <h5 class="m-0">Gerenciar Usuário</h5>
-            <span class="block mt-2 md:mt-0 p-input-icon-left">
-              <i class="pi pi-search" />
-              <InputText v-model="filters.global.value" placeholder="Procurar" />
-            </span>
-          </div>
-        </template>
+          ref="dt"
+          v-model:selection="selectedUsers"
+          :value="users"
+          data-key="id"
+          :paginator="true"
+          :rows="10"
+          :filters="filters"
+          paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+          :rows-per-page-options="[5, 10, 25]"
+          current-page-report-template="Mostrando {first} a {last} de {totalRecords} usuários"
+          responsive-layout="scroll"
+        >
+          <template #header>
+            <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+              <h5 class="m-0">Gerenciar Usuário</h5>
+              <span class="block mt-2 md:mt-0 p-input-icon-left">
+                <i class="pi pi-search" />
+                <InputText v-model="filters.global.value" placeholder="Procurar" />
+              </span>
+            </div>
+          </template>
 
-        <Column field="nome" header="Nome" :sortable="true">
-          <template #body="slotProps">
-            <span class="p-column-title">Nome</span>
-            {{ slotProps.data.nome }}
-          </template>
-        </Column>
-        <Column field="email" header="Email" :sortable="true">
-          <template #body="slotProps">
-            <span class="p-column-title">Email</span>
-            {{ slotProps.data.email }}
-          </template>
-        </Column>
-        <Column field="cargo" header="Cargo" :sortable="true">
-          <template #body="slotProps">
-            <span class="p-column-title">Cargo</span>
-            {{ slotProps.data.cargo }}
-          </template>
-        </Column>
-        <Column selection-mode="multiple" header-style="width: 3em" />
-        <Column>
-          <template #body="slotProps">
-            <Button
-              icon="pi pi-pencil"
-              class="p-button-rounded p-button-success mr-2"
-              @click="editUser(slotProps.data)"
-            />
-            <Button
-              icon="pi pi-trash"
-              class="p-button-rounded p-button-warning"
-              @click="confirmDeleteUser(slotProps.data)"
-            />
-          </template>
-        </Column>
-      </DataTable>
+          <Column field="nome" header="Nome" :sortable="true">
+            <template #body="slotProps">
+              <span class="p-column-title">Nome</span>
+              {{ slotProps.data.nome }}
+            </template>
+          </Column>
+          <Column field="email" header="Email" :sortable="true">
+            <template #body="slotProps">
+              <span class="p-column-title">Email</span>
+              {{ slotProps.data.email }}
+            </template>
+          </Column>
+          <Column field="cargo" header="Cargo" :sortable="true">
+            <template #body="slotProps">
+              <span class="p-column-title">Cargo</span>
+              {{ slotProps.data.cargo }}
+            </template>
+          </Column>
+          <Column selection-mode="multiple" header-style="width: 3em" />
+          <Column>
+            <template #body="slotProps">
+              <Button
+                icon="pi pi-pencil"
+                class="p-button-rounded p-button-success mr-2"
+                @click="openEdit(slotProps.data)"
+              />
+              <Button
+                icon="pi pi-trash"
+                class="p-button-rounded p-button-warning"
+                @click="confirmDeleteUser(slotProps.data)"
+              />
+            </template>
+          </Column>
+        </DataTable>
       </div>
     </div>
   </div>
+  
   <Dialog :visible="showDialog" :modal="true" :closable="false">
     <template #header>
-      <h3>Cadastro de Usuário</h3>
+      <h3>{{ selectedUser ? 'Atualizar Usuário' : 'Cadastro de Usuário' }}</h3>
     </template>
     <template #default>
       <div class="p-field">
@@ -356,7 +403,7 @@ onMounted(() => {
         label="Salvar"
         icon="pi pi-check"
         class="p-button-text"
-        @click="saveUser"
+        @click="selectedUser ? editUser() : saveUser()"
       />
     </template>
   </Dialog>
@@ -382,7 +429,6 @@ onMounted(() => {
       <Button label="Sim" icon="pi pi-check" class="p-button-text" @click="deleteSelectedUsers" />
     </template>
   </Dialog>
-  
 </template>
 
 <style scoped>
@@ -390,12 +436,20 @@ onMounted(() => {
   justify-content: space-between;
 }
 
-.InputCSS {
-  margin-left: 10px;
+.label-padding {
+  padding-right: 10px;
 }
 
 .p-field {
   margin-bottom: 20px;
   margin-right: 10px;
+}
+
+.p-inputtext {
+  margin-left: 12px;
+}
+
+.p-component {
+  margin-left: 5px;
 }
 </style>
