@@ -1,9 +1,11 @@
 <script lang="ts">
-import { defineComponent } from "vue";
-import AppConfig from "~/components/layouts/default/AppConfig.vue";
-import AppFooter from "~/components/layouts/default/AppFooter.vue";
-import AppMenu from "~/components/layouts/default/AppMenu.vue";
-import AppTopBar from "~/components/layouts/default/AppTopbar.vue";
+import { useToast } from 'primevue/usetoast';
+import { defineComponent, reactive, ref, computed, onBeforeUpdate, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import AppConfig from '~/components/layouts/default/AppConfig.vue';
+import AppFooter from '~/components/layouts/default/AppFooter.vue';
+import AppMenu from '~/components/layouts/default/AppMenu.vue';
+import AppTopBar from '~/components/layouts/default/AppTopbar.vue';
 
 export default defineComponent({
   components: {
@@ -12,232 +14,246 @@ export default defineComponent({
     AppConfig,
     AppFooter,
   },
-  data() {
-    return {
-      layoutMode: "overlay", // overlay, static
-      menuActive: false,
-      menuClick: false,
-      staticMenuInactive: false,
-      overlayMenuActive: false,
-      mobileMenuActive: false,
-      menu: [
-        {
-          label: "Home",
-          items: [
-            {
-              label: "Dashboard",
-              icon: "pi pi-fw pi-home",
-              to: "/",
-            },
-          ],
-        },
-        {
-          label: "Gerenciar Processos",
-          icon: "pi pi-fw pi-sitemap",
-          items: [
-            {
-              label: "Novo",
-              icon: "pi pi-plus",
-              to: "/gerenciamento-processos/novo",
-            },
-            {
-              label: "Meus Processos",
-              icon: "pi pi-folder",
-              to: "/gerenciamento-processos/meus-processos",
-            },
-            {
-              label: "Histórico de Processos",
-              icon: "pi pi-folder-open",
-              to: "/gerenciamento-processos/historico-processos",
-            },
-          ],
-        },
-        {
-          label: "Acessar Processos",
-          icon: "pi pi-fw pi-sitemap",
-          items: [
-            {
-              label: "Todos os Processos",
-              icon: "pi pi-fw pi-folder",
-              to: "/acessar-processos",
-            },
-            {
-              label: "Recursos Humanos",
-              icon: "pi pi-fw pi-users",
-              to: "/acessar-processos/RH",
-            },
-            {
-              label: "Tecnologia",
-              icon: "pi pi-desktop",
-              to: "/acessar-processos/TI",
-            },
-            {
-              label: "Adminstração",
-              icon: "pi pi-sitemap",
-              to: "/acessar-processos/ADM",
-            },
-            {
-              label: "Comercial",
-              icon: "pi pi-fw pi-wallet",
-              to: "/acessar-processos/COMERCIAL",
-            },
-          ],
-        },
-        {
-          label: "Gestão",
-          icon: "pi pi-fw pi-lock",
-          items: [
-            {
-              label: "Gestão de Usuários",
-              icon: "pi pi-fw pi-user-edit",
-              to: "/gestao/gestao-usuario",
-            },
-            {
-              label: "Gestão de Processos",
-              icon: "pi pi-fw pi-file-edit",
-              to: "/gestao/gestao-processo",
-            },
-            {
-              label: "Auditoria",
-              icon: "pi pi-fw pi-history",
-              to: "/gestao/auditoria",
-            },
-          ],
-        },
-        {
-          label: "Ajuda e Suporte",
-          items: [
-            {
-              label: "Documentação do Sistema",
-              icon: "pi pi-fw pi-question",
-              to: "/suporte/documentacao",
-            },
-            {
-              label: "Contatar Suporte",
-              icon: "pi pi-envelope",
-              to: "/suporte/contatar",
-            },
-            {
-              label: "Sobre",
-              icon: "pi pi-fw pi-info-circle",
-              to: "/suporte/sobre",
-            },
-          ],
-        },
-      ],
-    };
-  },
-  computed: {
-    containerClass() {
-      return [
-        "layout-wrapper",
-        {
-          "layout-overlay": this.layoutMode === "overlay",
-          "layout-static": this.layoutMode === "static",
-          "layout-static-sidebar-inactive":
-            this.staticMenuInactive && this.layoutMode === "static",
-          "layout-overlay-sidebar-active":
-            this.overlayMenuActive && this.layoutMode === "overlay",
-          "layout-mobile-sidebar-active": this.mobileMenuActive,
-          "p-input-filled": this.$primevue.config.inputStyle === "filled",
-          "p-ripple-disabled": this.$primevue.config.ripple === false,
-          "layout-theme-light": this.$appState.theme?.startsWith("saga"),
-        },
-      ];
-    },
-    logo() {
-      // return (this.$appState.darkTheme) ? '/images/logo-white.svg' : '/images/logo.svg';
-      return "/images/logo.png";
-    },
-  },
-  watch: {
-    $route() {
-      this.menuActive = false;
-      this.$toast.removeAllGroups();
-    },
-  },
-  beforeUpdate() {
-    if (this.mobileMenuActive) {
-      this.addClass(document.body, "body-overflow-hidden");
-    } else {
-      this.removeClass(document.body, "body-overflow-hidden");
-    }
-  },
-  methods: {
-    onWrapperClick() {
-      if (!this.menuClick) {
-        this.overlayMenuActive = false;
-        this.mobileMenuActive = false;
+  async setup() {
+    const router = useRouter();
+
+    const layoutMode = ref('overlay');
+    const menuActive = ref(false);
+    const menuClick = ref(false);
+    const staticMenuInactive = ref(false);
+    const overlayMenuActive = ref(false);
+    const mobileMenuActive = ref(false);
+
+    // Get Categories
+    const supabase = useSupabaseClient();
+
+    const categories: any[] = (await supabase.from('categorias').select()).data || [];
+
+    console.log('CATEGORIES = ', categories);
+
+    const menu = reactive([
+      {
+        label: "Home",
+        items: [
+          {
+            label: "Dashboard",
+            icon: "pi pi-fw pi-home",
+            to: "/",
+          },
+        ],
+      },
+      {
+        label: "Gerenciar Processos",
+        icon: "pi pi-fw pi-sitemap",
+        items: [
+          {
+            label: "Novo",
+            icon: "pi pi-plus",
+            to: "/gerenciamento-processos/novo",
+          },
+          {
+            label: "Meus Processos",
+            icon: "pi pi-folder",
+            to: "/gerenciamento-processos/meus-processos",
+          },
+          {
+            label: "Histórico de Processos",
+            icon: "pi pi-folder-open",
+            to: "/gerenciamento-processos/historico-processos",
+          },
+        ],
+      },
+      {
+        label: "Acessar Processos",
+        icon: "pi pi-fw pi-sitemap",
+        items: [
+          {
+            label: "Todos os Processos",
+            icon: "pi pi-fw pi-folder",
+            to: "/acessar-processos",
+          },
+          // Caminhos dinâmicos para cada categoria
+          ...categories.map((categoria) => ({
+            label: categoria.nome,
+            icon: "pi pi-fw pi-folder",
+            to: `/acessar-processos/${categoria.nome.toLowerCase().replace(/ /g, "-")}`,
+          })),
+        ],
+      },
+      {
+        label: "Gestão",
+        icon: "pi pi-fw pi-lock",
+        items: [
+          {
+            label: "Gestão de Usuários",
+            icon: "pi pi-fw pi-user-edit",
+            to: "/gestao/gestao-usuario",
+          },
+          {
+            label: "Gestão de Processos",
+            icon: "pi pi-fw pi-file-edit",
+            to: "/gestao/gestao-processo",
+          },
+          {
+            label: "Auditoria",
+            icon: "pi pi-fw pi-history",
+            to: "/gestao/auditoria",
+          },
+        ],
+      },
+      {
+        label: "Ajuda e Suporte",
+        items: [
+          {
+            label: "Documentação do Sistema",
+            icon: "pi pi-fw pi-question",
+            to: "/suporte/documentacao",
+          },
+          {
+            label: "Contatar Suporte",
+            icon: "pi pi-envelope",
+            to: "/suporte/contatar",
+          },
+          {
+            label: "Sobre",
+            icon: "pi pi-fw pi-info-circle",
+            to: "/suporte/sobre",
+          },
+        ],
+      },
+    ]);
+
+    const containerClass = computed(() => [
+      'layout-wrapper',
+      {
+        'layout-overlay': layoutMode.value === 'overlay',
+        'layout-static': layoutMode.value === 'static',
+        'layout-static-sidebar-inactive': staticMenuInactive.value && layoutMode.value === 'static',
+        'layout-overlay-sidebar-active': overlayMenuActive.value && layoutMode.value === 'overlay',
+        'layout-mobile-sidebar-active': mobileMenuActive.value,
+        'p-input-filled': usePrimeVue().config.inputStyle === 'filled',
+        'p-ripple-disabled': usePrimeVue().config.ripple === false,
+        'layout-theme-light': useNuxtApp().theme?.startsWith('saga'),
+      },
+    ]);
+
+    const logo = computed(() => '/images/logo.png');
+
+    watch(() => router.currentRoute, () => {
+      menuActive.value = false;
+      useToast().removeAllGroups();
+    });
+
+    onBeforeUpdate(() => {
+      if (mobileMenuActive.value) {
+        addClass(document.body, 'body-overflow-hidden');
+      } else {
+        removeClass(document.body, 'body-overflow-hidden');
       }
+    });
 
-      this.menuClick = false;
-    },
-    onMenuToggle(event: Event) {
-      this.menuClick = true;
+    const onWrapperClick = () => {
+      if (!menuClick.value) {
+        overlayMenuActive.value = false;
+        mobileMenuActive.value = false;
+      }
+      menuClick.value = false;
+    };
 
-      if (this.isDesktop()) {
-        if (this.layoutMode === "overlay") {
-          if (this.mobileMenuActive) {
-            this.overlayMenuActive = true;
+    const onMenuToggle = (event: Event) => {
+      menuClick.value = true;
+
+      if (isDesktop()) {
+        if (layoutMode.value === 'overlay') {
+          if (mobileMenuActive.value) {
+            overlayMenuActive.value = true;
           }
 
-          this.overlayMenuActive = !this.overlayMenuActive;
-          this.mobileMenuActive = false;
-        } else if (this.layoutMode === "static") {
-          this.staticMenuInactive = !this.staticMenuInactive;
+          overlayMenuActive.value = !overlayMenuActive.value;
+          mobileMenuActive.value = false;
+        } else if (layoutMode.value === 'static') {
+          staticMenuInactive.value = !staticMenuInactive.value;
         }
       } else {
-        this.mobileMenuActive = !this.mobileMenuActive;
+        mobileMenuActive.value = !mobileMenuActive.value;
       }
 
       event.preventDefault();
-    },
-    onSidebarClick() {
-      this.menuClick = true;
-    },
-    onMenuItemClick(event: any) {
+    };
+
+    const onSidebarClick = () => {
+      menuClick.value = true;
+    };
+
+    const onMenuItemClick = (event: any) => {
       if (event.item && !event.item.items) {
-        this.overlayMenuActive = false;
-        this.mobileMenuActive = false;
+        overlayMenuActive.value = false;
+        mobileMenuActive.value = false;
       }
-    },
-    onLayoutChange(layoutMode: string) {
-      this.layoutMode = layoutMode;
-    },
-    addClass(element: Element, className: string) {
+    };
+
+    const onLayoutChange = (newLayoutMode: string) => {
+      layoutMode.value = newLayoutMode;
+    };
+
+    const addClass = (element: Element, className: string) => {
       if (element.classList) {
         element.classList.add(className);
       } else {
         element.className += ` ${className}`;
       }
-    },
-    removeClass(element: Element, className: string) {
+    };
+
+    const removeClass = (element: Element, className: string) => {
       if (element.classList) {
         element.classList.remove(className);
       } else {
         element.className = element.className.replace(
-          new RegExp(`(^|\\b)${className.split(" ").join("|")}(\\b|$)`, "gi"),
-          " ",
+          new RegExp(`(^|\\b)${className.split(' ').join('|')}(\\b|$)`, 'gi'),
+          ' ',
         );
       }
-    },
-    isDesktop() {
+    };
+
+    const isDesktop = () => {
       return window.innerWidth >= 992;
-    },
-    isSidebarVisible() {
-      if (this.isDesktop()) {
-        if (this.layoutMode === "static") {
-          return !this.staticMenuInactive;
-        } else if (this.layoutMode === "overlay") {
-          return this.overlayMenuActive;
+    };
+
+    const isSidebarVisible = () => {
+      if (isDesktop()) {
+        if (layoutMode.value === 'static') {
+          return !staticMenuInactive.value;
+        } else if (layoutMode.value === 'overlay') {
+          return overlayMenuActive.value;
         }
       }
-
       return true;
-    },
+    };
+
+    return {
+      layoutMode,
+      menuActive,
+      menuClick,
+      staticMenuInactive,
+      overlayMenuActive,
+      mobileMenuActive,
+      menu,
+      containerClass,
+      logo,
+      onWrapperClick,
+      onMenuToggle,
+      onSidebarClick,
+      onMenuItemClick,
+      onLayoutChange,
+      addClass,
+      removeClass,
+      isDesktop,
+      isSidebarVisible,
+    };
   },
 });
 </script>
+
 
 <template>
   <div :class="containerClass" @click="onWrapperClick">

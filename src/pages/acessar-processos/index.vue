@@ -12,14 +12,13 @@
           <DataTable
             v-model:filters="filters"
             :value="processos"
-            :onchange="console.log('FILTERS = ', filters)"
             paginator
             showGridlines
             :rows="10"
             dataKey="id"
             filterDisplay="menu"
             :loading="loading"
-            :globalFilterFields="['titulo', 'categoria', 'diagrama']"
+            :globalFilterFields="['titulo', 'categoria', 'usuario', 'diagrama']"
           >
             <template #header>
               <div class="flex justify-content-between">
@@ -91,6 +90,19 @@
                 ></Button>
               </template>
             </Column>
+            <Column field="usuario" header="Usuário" style="min-width: 12rem">
+              <template #body="{ data }">
+                {{ data.usuario }}
+              </template>
+              <template #filter="{ filterModel }">
+                <InputText
+                  v-model="filterModel.value"
+                  type="text"
+                  class="p-column-filter"
+                  placeholder="Procurar por usuário"
+                />
+              </template>
+            </Column>
             <Column header="Tags" field="tags" style="min-width: 12rem">
               <template #body="{ data }">
                 <Tag
@@ -147,8 +159,6 @@ const processosTags = ref([]);
 const allTags = ref([]);
 const loading = ref(true);
 
-const adminAuthClient = supabase.auth.admin;
-
 // * Carregando dados
 onMounted(() => {
   supabase
@@ -166,11 +176,11 @@ onMounted(() => {
 
       // get user
       processos.value = processos.value.map((processo) => {
-        processo.user = getUser(processo.user_id);
+        getUser(processo.usuario_id).then((user) => {
+          processo.usuario = user;
+        });
         return processo;
       });
-
-      console.log("PROCESSOS = ", processos.value);
 
       supabase
         .from("processos_tag")
@@ -182,8 +192,6 @@ onMounted(() => {
             processo.tags = getTags(processo.id);
             return processo;
           });
-
-          console.log("NOVO PROCESSO = ", processos.value);
         });
     });
 
@@ -213,6 +221,10 @@ const initFilters = () => {
       operator: FilterOperator.AND,
       constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
     },
+    usuario: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
+    },
     diagrama: { value: null, matchMode: FilterMatchMode.EQUALS },
   };
 };
@@ -230,11 +242,9 @@ const getTags = (processoId) => {
 };
 
 const getUser = async (userId) => {
-  const user = await supabase.auth.admin.getUserById(userId);
+  const user = await supabase.from("users").select().eq("id", userId).single();
 
-  console.log("USER = ", user);
-
-  return user;
+  return user.data.nome;
 };
 
 const clearFilter = () => {
