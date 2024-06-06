@@ -124,6 +124,44 @@ onMounted(() => {
     });
 });
 
+
+const fetchProcess = async () => {
+
+supabase
+  .from("processos")
+  .select("*, categorias:categoria_id(*)")
+  .then(({ data }) => {
+    processos.value = data;
+    loading.value = false;
+
+    // convert diagrama to boolean
+    processos.value = processos.value.map((processo) => {
+      processo.diagrama = convertDiagramaToBoolean(processo.diagrama);
+      return processo;
+    });
+
+    // get user
+    processos.value = processos.value.map((processo) => {
+      getUser(processo.usuario_id).then((user) => {
+        processo.usuario = user;
+      });
+      return processo;
+    });
+
+    supabase
+      .from("processos_tag")
+      .select("*, tags:id_tag(*)")
+      .then(({ data }) => {
+        processosTags.value = data;
+
+        processos.value = processos.value.map((processo) => {
+          processo.tags = getTags(processo.id);
+          return processo;
+        });
+      });
+  });
+}
+
 const initFilters = () => {
   filters.value = {
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -164,6 +202,71 @@ const getUser = async (userId) => {
 const clearFilter = () => {
   initFilters();
 };
+
+
+
+async function deleteProcess() {
+  try {
+    const idToDelete = selectedProcess.value.id;
+    const { error } = await supabase.from("processos").delete().eq("id", idToDelete);
+
+    if (error) {
+      throw error;
+    }
+
+    toast.add({
+      severity: "success",
+      summary: "Sucesso",
+      detail: "Processo excluído com sucesso",
+    });
+    fetchProcess();
+  } catch (error) {
+    console.error("Erro ao excluir processo:", error.message);
+    toast.add({
+      severity: "error",
+      summary: "Erro",
+      detail: "Erro ao excluir processo",
+    });
+  } finally {
+    deleteProcessoDialog.value = false;
+  }
+}
+
+async function deleteSelectedProcessos() {
+  try {
+    const idsToDelete = selectedMultipleProcess.value.map(processo => processo.id);
+    const { error } = await supabase.from("processos").delete().in("id", idsToDelete);
+
+    if (error) {
+      throw error;
+    }
+
+    toast.add({
+      severity: "success",
+      summary: "Sucesso",
+      detail: "Processos selecionados excluídas com sucesso",
+    });
+    fetchProcess();
+  } catch (error) {
+    console.error("Erro ao excluir processos selecionados:", error.message);
+    toast.add({
+      severity: "error",
+      summary: "Erro",
+      detail: "Erro ao excluir processos selecionados",
+    });
+  } finally {
+    deleteProcessoDialog.value = false;
+  }
+}
+
+function confirmDeleteProcess(processo) {
+  selectedProcess.value = processo;
+  deleteProcessoDialog.value = true;
+}
+
+function confirmDeleteSelected() {
+  deleteProcessosDialog.value = true;
+}
 </script>
 
 <template>
@@ -328,7 +431,7 @@ const clearFilter = () => {
             <Button
               icon="pi pi-trash"
               class="p-button-rounded p-button-warning"
-              @click="confirmDeleteUser(slotProps.data)"
+              @click="confirmDeleteProcess(slotProps.data)"
             />
           </template>
         </Column>
@@ -368,6 +471,46 @@ const clearFilter = () => {
         />
       </template>
     </Dialog>
+
+    <Dialog
+    v-model:visible="deleteProcessoDialog"
+    :style="{ width: '450px' }"
+    header="Confirmar exclusão"
+    :modal="true"
+  >
+    <div class="flex align-items-center justify-content-center">
+      <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+      <span v-if="selectedProcess && selectedMultipleProcess.length > 0"
+        >Tem certeza de que deseja excluir os processos selecionados?</span
+      >
+    </div>
+    <template #footer>
+      <Button
+        label="Não"
+        icon="pi pi-times"
+        class="p-button-text"
+        @click="deleteProcessoDialog = false"
+      />
+      <Button
+        label="Sim"
+        icon="pi pi-check"
+        class="p-button-text"
+        @click="deleteProcess"
+      />
+    </template>
+  </Dialog>
+
+  <ConfirmDialog
+      :visible="deleteProcessosDialog"
+      header="Confirmar exclusão"
+      icon="pi pi-exclamation-triangle"
+      :message="'Você tem certeza de que deseja excluir os processos selecionados?'"
+      acceptLabel="Sim"
+      rejectLabel="Não"
+      @accept="deleteSelectedProcesses"
+      @reject="() => { deleteProcessosDialog.value = false; }"
+    />
+
   </slot>
 </template>
 

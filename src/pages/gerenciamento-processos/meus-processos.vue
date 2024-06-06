@@ -248,7 +248,7 @@ function confirmDeleteSelected() {
       <div class="col-12">
         <div class="card">
           <h5>Gerenciar Meus Processos</h5>
-          <p> Gerencie seus processos de maneira fácil, rápida e simples.  </p>
+          <p> Gerencie seus processos de maneira fácil, rápida  </p>
         </div>
       </div>
     </div>
