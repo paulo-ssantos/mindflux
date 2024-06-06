@@ -44,7 +44,13 @@
             <template #loading> Carregando... </template>
             <Column field="titulo" header="Título" style="min-width: 12rem">
               <template #body="{ data }">
-                {{ data.titulo }}
+                <RouterLink
+                  :to="`/processo/${data.id}`"
+                  class="text-primary-500"
+                >
+                  <Icon name="prime:angle-right" class="h-full" />
+                  {{ data.titulo }}
+                </RouterLink>
               </template>
               <template #filter="{ filterModel }">
                 <InputText
@@ -128,15 +134,12 @@ const route = useRoute();
 const categoriaFilter = route.params.categoria.replace(/-/g, " ");
 // * Carregando dados
 onMounted(async () => {
-
-  
   await supabase
     .from("categorias")
     .select()
     .then(({ data }) => {
       categorias.value = data;
     });
-
 
   supabase
     .from("processos")
@@ -172,7 +175,6 @@ onMounted(async () => {
           });
         });
     });
-
 
   supabase
     .from("tags")
@@ -220,7 +222,9 @@ const getUser = async (userId) => {
 };
 
 const getCategoriaId = async (categoriaNome) => {
-  const categoria = categorias.value.find((categoria) => (categoria.nome).toLowerCase() === categoriaNome);
+  const categoria = categorias.value.find(
+    (categoria) => categoria.nome.toLowerCase() === categoriaNome,
+  );
 
   return categoria.id;
 };

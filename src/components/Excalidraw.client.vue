@@ -10,14 +10,25 @@
 </template>
 
 <script lang="ts" setup>
+const props = defineProps({
+  initialElements: {
+    type: Array,
+    default: () => {},
+  },
+  readOnly: {
+    type: Boolean,
+    default: false,
+  },
+});
+
 // * Importando
-import { ExcalidrawStore } from "~/store/excalidrawStore";
 import * as ExcalidrawLib from "@excalidraw/excalidraw";
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { ExcalidrawStore } from "~/store/excalidrawStore";
 
 // * definindo a variavel de dados
-const excalidrawElementsData = ref({});
+const excalidrawElementsData = ref(props.initialElements);
 
 // * Montando o componente Excalidraw na inicialização
 onMounted(() => {
@@ -33,6 +44,9 @@ onMounted(() => {
         React.createElement(ExcalidrawLib.Excalidraw as any, {
           initialData: excalidrawElementsData.value,
           onChange: (elements: any, state: any) => {
+            if (props.readOnly) {
+              return;
+            }
             excalidrawElementsData.value = elements;
           },
         }),
@@ -47,11 +61,9 @@ onMounted(() => {
   root.render(React.createElement(App));
 });
 
-// Definindo o processo de salvamento do Excalidraw na store
 watchEffect(() => {
   ExcalidrawStore.excalidrawElementsData = excalidrawElementsData.value;
 });
-
 </script>
 
 <style scoped></style>

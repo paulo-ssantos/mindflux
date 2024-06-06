@@ -4,6 +4,7 @@ import { ref, computed } from 'vue';
 // Assuming $appState is available globally or imported
 const appState = useNuxtApp().appState;
 
+
 const visibleRight = ref(false);
 
 const emit = defineEmits(['topbarMenuToggle', 'menuToggle']);
@@ -23,6 +24,8 @@ const topbarImage = () => {
 
 const router = useRouter();
 const supabase = useSupabaseClient();
+const usuario = await supabase.auth.getUser()
+
 
 const logout = async () => {
   visibleRight.value = false;
@@ -80,8 +83,15 @@ const logout = async () => {
 
   <Sidebar v-model:visible="visibleRight" :base-z-index="1000" position="right">
           <h1 style="fontWeight:normal">
-            Right Sidebar
+            Sobre
           </h1>
+          <p>
+            <strong>Nome:</strong> {{ usuario.data.user?.user_metadata.name || usuario.data.user?.user_metadata.nome }}
+            <br />
+            <strong>Email:</strong> {{ usuario.data.user?.email }}
+            <br />
+            <strong>Cargo:</strong> {{ usuario.data.user?.user_metadata.cargo || 'Não informado' }}
+          </p>
           <Button
             type="button" label="Logout" class="p-button-warning"
             style="margin-right:.25em"
