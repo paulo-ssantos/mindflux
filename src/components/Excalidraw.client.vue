@@ -25,6 +25,7 @@ const props = defineProps({
 import * as ExcalidrawLib from "@excalidraw/excalidraw";
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { ExcalidrawStore } from "~/store/excalidrawStore";
 
 // * definindo a variavel de dados
 const excalidrawElementsData = ref(props.initialElements);
@@ -58,6 +59,10 @@ onMounted(() => {
   ) as HTMLElement;
   const root = ReactDOM.createRoot(excalidrawWrapper);
   root.render(React.createElement(App));
+});
+
+watchEffect(() => {
+  ExcalidrawStore.excalidrawElementsData = excalidrawElementsData.value;
 });
 </script>
 
