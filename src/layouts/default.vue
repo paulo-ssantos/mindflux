@@ -29,8 +29,6 @@ export default defineComponent({
 
     const categories: any[] = (await supabase.from('categorias').select()).data || [];
 
-    console.log('CATEGORIES = ', categories);
-
     const menu = reactive([
       {
         label: "Home",

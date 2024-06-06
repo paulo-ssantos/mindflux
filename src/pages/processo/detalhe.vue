@@ -1,15 +1,21 @@
 <template>
   <slot>
-    <h5>Informações Gerais do Processo</h5>
-    <p>Acesse as informações sobre o processo selecionado.</p>
+    <div class="card">
+      <h5>Processo em Detalhe</h5>
+      <p>Documentação detalhada de como aplicar o processo.</p>
 
-    <!-- Show all informations of processo -->
-    <div class="p-fluid formgrid grid">
-      <ClientOnly fallback-tag="span" fallback="Carregando o editor...">
-        <div class="border-2 border-primary rounded-4xl p-2 w-full">
-          <NuxtEditorJs v-model:modelValue="processTextContent" />
-        </div>
-      </ClientOnly>
+      <!-- Show all informations of processo -->
+      <div class="p-fluid formgrid grid">
+        <ClientOnly fallback-tag="span" fallback="Carregando o editor...">
+          <div class="border-2 border-primary rounded-4xl p-2 w-full">
+            <NuxtEditorJs
+              :config="config"
+              :holder="holder"
+              v-model:modelValue="processTextContent"
+            />
+          </div>
+        </ClientOnly>
+      </div>
     </div>
   </slot>
 </template>
@@ -22,6 +28,12 @@ const processoId: Ref<any> = ref(ProcessoStore.processoId);
 const router = useRouter();
 const inputDisabled = ref(true); // * Variável para controle de edição
 
+const holder = "nuxt-editor-js";
+const config = {
+  autofocus: false,
+  readOnly: true,
+};
+
 const processTextContent = ref(
   (
     await supabase
@@ -29,10 +41,14 @@ const processTextContent = ref(
       .select("conteudo")
       .eq("id", processoId.value)
       .single()
-  ).data,
+  ).data.conteudo,
 );
 
-console.log(processTextContent.value);
+onMounted(() => {
+  if (processoId.value == null) {
+    router.push("/acessar-processos");
+  }
+});
 </script>
 
 <style scoped></style>
