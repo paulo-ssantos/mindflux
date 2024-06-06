@@ -1,48 +1,55 @@
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
+import { ref } from "vue";
 
 // Assuming $appState is available globally or imported
 const appState = useNuxtApp().appState;
 
-
 const visibleRight = ref(false);
 
-const emit = defineEmits(['topbarMenuToggle', 'menuToggle']);
+const emit = defineEmits(["topbarMenuToggle", "menuToggle"]);
 
 const onMenuToggle = (event: Event) => {
-  emit('menuToggle', event);
+  emit("menuToggle", event);
 };
 
 const onTopbarMenuToggle = (event: Event) => {
-  emit('topbarMenuToggle', event);
+  emit("topbarMenuToggle", event);
 };
 
 const topbarImage = () => {
   // return this.$appState.darkTheme? '/images/logo-white.svg' : '/images/logo-dark.svg';
-  return '/images/logo.png';
+  return "/images/logo.png";
 };
 
 const router = useRouter();
 const supabase = useSupabaseClient();
-const usuario = await supabase.auth.getUser()
 
+const user = await supabase.auth.getUser();
+const userId = user.data.user?.id;
+
+const publicUser = (
+  await supabase.from("users").select().eq("id", userId).single()
+).data;
 
 const logout = async () => {
   visibleRight.value = false;
 
   await supabase.auth.signOut();
 
-  router.push('/login');
+  router.push("/login");
 };
 </script>
 
 <template>
   <div class="layout-topbar">
     <NuxtLink to="/" class="layout-topbar-logo">
-      <img alt="Logo" :src="topbarImage()">
+      <img alt="Logo" :src="topbarImage()" />
       <span>MINDFLUX</span>
     </NuxtLink>
-    <button class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle">
+    <button
+      class="p-link layout-menu-button layout-topbar-button"
+      @click="onMenuToggle"
+    >
       <i class="pi pi-bars" />
     </button>
 
@@ -53,7 +60,7 @@ const logout = async () => {
         enterActiveClass: 'scalein',
         leaveToClass: 'hidden',
         leaveActiveClass: 'fadeout',
-        hideOnOutsideClick: true
+        hideOnOutsideClick: true,
       }"
       class="p-link layout-topbar-menu-button layout-topbar-button"
     >
@@ -73,7 +80,10 @@ const logout = async () => {
         </button>
       </li>
       <li>
-        <button class="p-link layout-topbar-button" @click="visibleRight = true">
+        <button
+          class="p-link layout-topbar-button"
+          @click="visibleRight = true"
+        >
           <i class="pi pi-user" />
           <span>Profile</span>
         </button>
@@ -82,21 +92,26 @@ const logout = async () => {
   </div>
 
   <Sidebar v-model:visible="visibleRight" :base-z-index="1000" position="right">
-          <h1 style="fontWeight:normal">
-            Sobre
-          </h1>
-          <p>
-            <strong>Nome:</strong> {{ usuario.data.user?.user_metadata.name || usuario.data.user?.user_metadata.nome }}
-            <br />
-            <strong>Email:</strong> {{ usuario.data.user?.email }}
-            <br />
-            <strong>Cargo:</strong> {{ usuario.data.user?.user_metadata.cargo || 'Não informado' }}
-          </p>
-          <Button
-            type="button" label="Logout" class="p-button-warning"
-            style="margin-right:.25em"
-            @click="logout"
-          />
-          <Button type="button" label="Cancel" class="p-button-secondary" @click="visibleRight = false" />
-        </Sidebar>
+    <h1 style="fontweight: normal">Sobre</h1>
+    <p>
+      <strong>Nome:</strong> {{ publicUser.nome || "Não informado" }}
+      <br />
+      <strong>Email:</strong> {{ publicUser.email || "Não informado" }}
+      <br />
+      <strong>Cargo:</strong> {{ publicUser.cargo || "Não informado" }}
+    </p>
+    <Button
+      type="button"
+      label="Logout"
+      class="p-button-warning"
+      style="margin-right: 0.25em"
+      @click="logout"
+    />
+    <Button
+      type="button"
+      label="Cancel"
+      class="p-button-secondary"
+      @click="visibleRight = false"
+    />
+  </Sidebar>
 </template>

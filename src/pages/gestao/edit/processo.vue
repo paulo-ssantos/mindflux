@@ -1,8 +1,6 @@
 <script setup>
-
 import { FilterMatchMode, FilterOperator } from "primevue/api";
 import { useToast } from "primevue/usetoast";
-
 
 // * Definindo variáveis
 const supabase = useSupabaseClient();
@@ -25,8 +23,6 @@ const loading = ref(true);
 
 const cadastrarCategoria = ref("");
 
-
-
 function openNew() {
   showDialog.value = true;
   selectedProcess.value = null;
@@ -39,7 +35,7 @@ function openEdit(processo) {
 }
 
 function hideDialog() {
-  showDialog.value = false; 
+  showDialog.value = false;
   submitted.value = false;
 }
 
@@ -52,10 +48,8 @@ async function saveCategory() {
   submitted.value = true;
 
   try {
-    const { data, error } = await supabase
-    .from("categorias")
-    .insert({ 
-      nome: cadastrarCategoria.value
+    const { data, error } = await supabase.from("categorias").insert({
+      nome: cadastrarCategoria.value,
     });
 
     if (error) {
@@ -173,191 +167,190 @@ const clearFilter = () => {
 </script>
 
 <template>
-<slot>
+  <slot>
     <div class="grid">
-        <div class="col-12">
-          <div class="card">
-            <h5>Admnistrar Processos</h5>
-            <p>
-              Exclue e edite processos cadastrados no sistema.
-            </p>
-          </div>
+      <div class="col-12">
+        <div class="card">
+          <h5>Admnistrar Processos</h5>
+          <p>Exclue e edite processos cadastrados no sistema.</p>
         </div>
-        </div>
+      </div>
+    </div>
 
-  <div class="card">
-    <DataTable
-      v-model:filters="filters"
-      v-model:selection="selectedMultipleProcess"
-      :value="processos"
-      paginator
-      showGridlines
-      :rows="10"
-      dataKey="id"
-      filterDisplay="menu"
-      :loading="loading"
-      :globalFilterFields="['titulo', 'categoria', 'usuario', 'diagrama']"
-      responsive-layout="scroll"
-    >
-      <template #header>
-        <div class="flex justify-content-between">
-          <Button
-            type="button"
-            icon="pi pi-filter-slash"
-            label="Clear"
-            outlined
-            @click="clearFilter()"
-          />
-          <IconField iconPosition="left">
-            <!-- <InputIcon>
+    <div class="card">
+      <DataTable
+        v-model:filters="filters"
+        v-model:selection="selectedMultipleProcess"
+        :value="processos"
+        paginator
+        showGridlines
+        :rows="10"
+        dataKey="id"
+        filterDisplay="menu"
+        :loading="loading"
+        :globalFilterFields="['titulo', 'categoria', 'usuario', 'diagrama']"
+        responsive-layout="scroll"
+      >
+        <template #header>
+          <div class="flex justify-content-between">
+            <Button
+              type="button"
+              icon="pi pi-filter-slash"
+              label="Clear"
+              outlined
+              @click="clearFilter()"
+            />
+            <IconField iconPosition="left">
+              <!-- <InputIcon>
         <i class="pi pi-search" />
       </InputIcon> -->
+              <InputText
+                v-model="filters['global'].value"
+                placeholder="Procurar Processo"
+              />
+            </IconField>
+          </div>
+        </template>
+        <template #empty> Processos não encontrados. </template>
+        <template #loading> Carregando... </template>
+        <Column selection-mode="multiple" header-style="width: 3em" />
+        <Column field="titulo" header="Título" style="min-width: 12rem">
+          <template #body="{ data }">
+            <div class="flex hover:underline">
+              <RouterLink :to="`/processo/${data.id}`" class="text-primary-500">
+                <Icon name="prime:angle-right" class="h-full" />
+                {{ data.titulo }}
+              </RouterLink>
+            </div>
+          </template>
+          <template #filter="{ filterModel }">
             <InputText
-              v-model="filters['global'].value"
-              placeholder="Procurar Processo"
+              v-model="filterModel.value"
+              type="text"
+              class="p-column-filter"
+              placeholder="Procurar por título"
             />
-          </IconField>
-        </div>
-      </template>
-      <template #empty> Processos não encontrados. </template>
-      <template #loading> Carregando... </template>
-      <Column selection-mode="multiple" header-style="width: 3em" />
-      <Column field="titulo" header="Título" style="min-width: 12rem">
-        <template #body="{ data }">
-          <div class="flex hover:underline">
-            <RouterLink
-              :to="`/processo/${data.id}`"
-              class="text-primary-500"
+          </template>
+        </Column>
+        <Column
+          header="Categoria"
+          filterField="categorias.nome"
+          style="min-width: 12rem"
+        >
+          <template #body="{ data }">
+            <div class="flex align-items-center gap-2">
+              <span>{{ data.categorias.nome }}</span>
+            </div>
+          </template>
+          <template #filter="{ filterModel }">
+            <InputText
+              v-model="filterModel.value"
+              type="text"
+              class="p-column-filter"
+              placeholder="Procurar por categoria"
+            />
+          </template>
+          <template #filterclear="{ filterCallback }">
+            <Button
+              type="button"
+              icon="pi pi-times"
+              @click="filterCallback()"
+              severity="secondary"
+            ></Button>
+          </template>
+          <template #filterapply="{ filterCallback }">
+            <Button
+              type="button"
+              icon="pi pi-check"
+              @click="filterCallback()"
+              severity="success"
+            ></Button>
+          </template>
+        </Column>
+        <Column field="usuario" header="Usuário" style="min-width: 12rem">
+          <template #body="{ data }">
+            {{ data.usuario }}
+          </template>
+          <template #filter="{ filterModel }">
+            <InputText
+              v-model="filterModel.value"
+              type="text"
+              class="p-column-filter"
+              placeholder="Procurar por usuário"
+            />
+          </template>
+        </Column>
+        <Column header="Tags" field="tags" style="min-width: 12rem">
+          <template #body="{ data }">
+            <Tag
+              v-for="tag in data.tags"
+              :value="tag.tags.nome"
+              class="p-2 m-2 transition-all"
+            />
+          </template>
+        </Column>
+        <Column
+          field="diagrama"
+          header="Diagrama"
+          dataType="boolean"
+          bodyClass="text-center"
+          style="min-width: 8rem"
+        >
+          <template #body="{ data }">
+            <i
+              class="pi"
+              :class="{
+                'pi-check-circle text-green-500 ': data.diagrama,
+                'pi-times-circle text-red-500': !data.diagrama,
+              }"
             >
-              <Icon name="prime:angle-right" class="h-full" />
-              {{ data.titulo }}
-            </RouterLink>
-          </div>
-        </template>
-        <template #filter="{ filterModel }">
-          <InputText
-            v-model="filterModel.value"
-            type="text"
-            class="p-column-filter"
-            placeholder="Procurar por título"
-          />
-        </template>
-      </Column>
-      <Column
-        header="Categoria"
-        filterField="categorias.nome"
-        style="min-width: 12rem"
-      >
-        <template #body="{ data }">
-          <div class="flex align-items-center gap-2">
-            <span>{{ data.categorias.nome }}</span>
-          </div>
-        </template>
-        <template #filter="{ filterModel }">
-          <InputText
-            v-model="filterModel.value"
-            type="text"
-            class="p-column-filter"
-            placeholder="Procurar por categoria"
-          />
-        </template>
-        <template #filterclear="{ filterCallback }">
-          <Button
-            type="button"
-            icon="pi pi-times"
-            @click="filterCallback()"
-            severity="secondary"
-          ></Button>
-        </template>
-        <template #filterapply="{ filterCallback }">
-          <Button
-            type="button"
-            icon="pi pi-check"
-            @click="filterCallback()"
-            severity="success"
-          ></Button>
-        </template>
-      </Column>
-      <Column field="usuario" header="Usuário" style="min-width: 12rem">
-        <template #body="{ data }">
-          {{ data.usuario }}
-        </template>
-        <template #filter="{ filterModel }">
-          <InputText
-            v-model="filterModel.value"
-            type="text"
-            class="p-column-filter"
-            placeholder="Procurar por usuário"
-          />
-        </template>
-      </Column>
-      <Column header="Tags" field="tags" style="min-width: 12rem">
-        <template #body="{ data }">
-          <Tag
-            v-for="tag in data.tags"
-            :value="tag.tags.nome"
-            class="p-2 m-2 transition-all"
-          />
-        </template>
-      </Column>
-      <Column
-        field="diagrama"
-        header="Diagrama"
-        dataType="boolean"
-        bodyClass="text-center"
-        style="min-width: 8rem"
-      >
-        <template #body="{ data }">
-          <i
-            class="pi"
-            :class="{
-              'pi-check-circle text-green-500 ': data.diagrama,
-              'pi-times-circle text-red-500': !data.diagrama,
-            }"
-          >
-          </i>
-        </template>
-        <template #filter="{ filterModel }">
-          <label for="diagrama-filter" class="font-bold">
-            Contém Diagrama?
-          </label>
-          <TriStateCheckbox
-            v-model="filterModel.value"
-            inputId="diagrama-filter"
-          />
-        </template>
-      </Column>
-          <Column>
-            <template #body="slotProps">
-              <Button
-                icon="pi pi-pencil"
-                class="p-button-rounded p-button-success mr-2"
-                @click="openEdit(slotProps.data)"
-              />
-              <Button
-                icon="pi pi-trash"
-                class="p-button-rounded p-button-warning"
-                @click="confirmDeleteUser(slotProps.data)"
-              />
-            </template>
-          </Column>
-    </DataTable>
-  </div>
+            </i>
+          </template>
+          <template #filter="{ filterModel }">
+            <label for="diagrama-filter" class="font-bold">
+              Contém Diagrama?
+            </label>
+            <TriStateCheckbox
+              v-model="filterModel.value"
+              inputId="diagrama-filter"
+            />
+          </template>
+        </Column>
+        <Column>
+          <template #body="slotProps">
+            <Button
+              icon="pi pi-pencil"
+              class="p-button-rounded p-button-success mr-2"
+              @click="
+                router.push({ path: `/processo/edit/${slotProps.data.id}` })
+              "
+            />
+            <Button
+              icon="pi pi-trash"
+              class="p-button-rounded p-button-warning"
+              @click="confirmDeleteUser(slotProps.data)"
+            />
+          </template>
+        </Column>
+      </DataTable>
+    </div>
 
-  <Dialog :visible="showDialog" :modal="true" :closable="false">
-    <template #header>
-      <h3>{{ selectedProcess ? 'Atualizar Categoria' : 'Criar nova Categoria' }}</h3>
-    </template>
-    <template #default>
-      <div class="p-field">
-        <label for="name"><strong>Nova Categoria:</strong></label>
-        <InputText
-          id="newCategory"
-          class="inputCSS"
-          v-model="cadastrarCategoria"
-          placeholder="Digite o nome da categoria"
-        />
-      </div>
+    <Dialog :visible="showDialog" :modal="true" :closable="false">
+      <template #header>
+        <h3>
+          {{ selectedProcess ? "Atualizar Categoria" : "Criar nova Categoria" }}
+        </h3>
+      </template>
+      <template #default>
+        <div class="p-field">
+          <label for="name"><strong>Nova Categoria:</strong></label>
+          <InputText
+            id="newCategory"
+            class="inputCSS"
+            v-model="cadastrarCategoria"
+            placeholder="Digite o nome da categoria"
+          />
+        </div>
       </template>
 
       <template #footer>
@@ -374,8 +367,8 @@ const clearFilter = () => {
           @click="selectedProcess ? editProcess() : saveCategory()"
         />
       </template>
-      </Dialog>
-</slot>
+    </Dialog>
+  </slot>
 </template>
 
 <style scoped></style>

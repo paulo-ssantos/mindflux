@@ -1,11 +1,18 @@
 <script lang="ts">
-import { useToast } from 'primevue/usetoast';
-import { defineComponent, reactive, ref, computed, onBeforeUpdate, watch } from 'vue';
-import { useRouter } from 'vue-router';
-import AppConfig from '~/components/layouts/default/AppConfig.vue';
-import AppFooter from '~/components/layouts/default/AppFooter.vue';
-import AppMenu from '~/components/layouts/default/AppMenu.vue';
-import AppTopBar from '~/components/layouts/default/AppTopbar.vue';
+import { useToast } from "primevue/usetoast";
+import {
+  computed,
+  defineComponent,
+  onBeforeUpdate,
+  reactive,
+  ref,
+  watch,
+} from "vue";
+import { useRouter } from "vue-router";
+import AppConfig from "~/components/layouts/default/AppConfig.vue";
+import AppFooter from "~/components/layouts/default/AppFooter.vue";
+import AppMenu from "~/components/layouts/default/AppMenu.vue";
+import AppTopBar from "~/components/layouts/default/AppTopbar.vue";
 
 export default defineComponent({
   components: {
@@ -17,7 +24,7 @@ export default defineComponent({
   async setup() {
     const router = useRouter();
 
-    const layoutMode = ref('overlay');
+    const layoutMode = ref("overlay");
     const menuActive = ref(false);
     const menuClick = ref(false);
     const staticMenuInactive = ref(false);
@@ -27,7 +34,17 @@ export default defineComponent({
     // Get Categories
     const supabase = useSupabaseClient();
 
-    const categories: any[] = (await supabase.from('categorias').select()).data || [];
+    const user = await supabase.auth.getUser();
+    const userId = user.data.user?.id;
+
+    const publicUser = (
+      await supabase.from("users").select().eq("id", userId).single()
+    ).data;
+
+    const isAdmin = publicUser?.cargo === "Administrador";
+
+    const categories: any[] =
+      (await supabase.from("categorias").select()).data || [];
 
     const menu = reactive([
       {
@@ -73,7 +90,8 @@ export default defineComponent({
           })),
         ],
       },
-      {
+      // If user is admin, show management options
+      isAdmin && {
         label: "Gestão",
         icon: "pi pi-fw pi-lock",
         items: [
@@ -87,7 +105,6 @@ export default defineComponent({
             icon: "pi pi-fw pi-file-edit",
             to: "/gestao/gestao-processo",
           },
-         
         ],
       },
       {
@@ -108,31 +125,36 @@ export default defineComponent({
     ]);
 
     const containerClass = computed(() => [
-      'layout-wrapper',
+      "layout-wrapper",
       {
-        'layout-overlay': layoutMode.value === 'overlay',
-        'layout-static': layoutMode.value === 'static',
-        'layout-static-sidebar-inactive': staticMenuInactive.value && layoutMode.value === 'static',
-        'layout-overlay-sidebar-active': overlayMenuActive.value && layoutMode.value === 'overlay',
-        'layout-mobile-sidebar-active': mobileMenuActive.value,
-        'p-input-filled': usePrimeVue().config.inputStyle === 'filled',
-        'p-ripple-disabled': usePrimeVue().config.ripple === false,
-        'layout-theme-light': useNuxtApp().theme?.startsWith('saga'),
+        "layout-overlay": layoutMode.value === "overlay",
+        "layout-static": layoutMode.value === "static",
+        "layout-static-sidebar-inactive":
+          staticMenuInactive.value && layoutMode.value === "static",
+        "layout-overlay-sidebar-active":
+          overlayMenuActive.value && layoutMode.value === "overlay",
+        "layout-mobile-sidebar-active": mobileMenuActive.value,
+        "p-input-filled": usePrimeVue().config.inputStyle === "filled",
+        "p-ripple-disabled": usePrimeVue().config.ripple === false,
+        "layout-theme-light": useNuxtApp().theme?.startsWith("saga"),
       },
     ]);
 
-    const logo = computed(() => '/images/logo.png');
+    const logo = computed(() => "/images/logo.png");
 
-    watch(() => router.currentRoute, () => {
-      menuActive.value = false;
-      useToast().removeAllGroups();
-    });
+    watch(
+      () => router.currentRoute,
+      () => {
+        menuActive.value = false;
+        useToast().removeAllGroups();
+      },
+    );
 
     onBeforeUpdate(() => {
       if (mobileMenuActive.value) {
-        addClass(document.body, 'body-overflow-hidden');
+        addClass(document.body, "body-overflow-hidden");
       } else {
-        removeClass(document.body, 'body-overflow-hidden');
+        removeClass(document.body, "body-overflow-hidden");
       }
     });
 
@@ -148,14 +170,14 @@ export default defineComponent({
       menuClick.value = true;
 
       if (isDesktop()) {
-        if (layoutMode.value === 'overlay') {
+        if (layoutMode.value === "overlay") {
           if (mobileMenuActive.value) {
             overlayMenuActive.value = true;
           }
 
           overlayMenuActive.value = !overlayMenuActive.value;
           mobileMenuActive.value = false;
-        } else if (layoutMode.value === 'static') {
+        } else if (layoutMode.value === "static") {
           staticMenuInactive.value = !staticMenuInactive.value;
         }
       } else {
@@ -193,8 +215,8 @@ export default defineComponent({
         element.classList.remove(className);
       } else {
         element.className = element.className.replace(
-          new RegExp(`(^|\\b)${className.split(' ').join('|')}(\\b|$)`, 'gi'),
-          ' ',
+          new RegExp(`(^|\\b)${className.split(" ").join("|")}(\\b|$)`, "gi"),
+          " ",
         );
       }
     };
@@ -205,9 +227,9 @@ export default defineComponent({
 
     const isSidebarVisible = () => {
       if (isDesktop()) {
-        if (layoutMode.value === 'static') {
+        if (layoutMode.value === "static") {
           return !staticMenuInactive.value;
-        } else if (layoutMode.value === 'overlay') {
+        } else if (layoutMode.value === "overlay") {
           return overlayMenuActive.value;
         }
       }
@@ -237,7 +259,6 @@ export default defineComponent({
   },
 });
 </script>
-
 
 <template>
   <div :class="containerClass" @click="onWrapperClick">
