@@ -288,7 +288,7 @@ onMounted(() => {
               </span>
             </div>
           </template>
-
+          <Column selection-mode="multiple" header-style="width: 3em" />
           <Column field="nome" header="Nome" :sortable="true">
             <template #body="slotProps">
               <span class="p-column-title">Nome</span>
@@ -307,7 +307,6 @@ onMounted(() => {
               {{ slotProps.data.cargo }}
             </template>
           </Column>
-          <Column selection-mode="multiple" header-style="width: 3em" />
           <Column>
             <template #body="slotProps">
               <Button

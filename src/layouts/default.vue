@@ -56,11 +56,6 @@ export default defineComponent({
             icon: "pi pi-folder",
             to: "/gerenciamento-processos/meus-processos",
           },
-          {
-            label: "Histórico de Processos",
-            icon: "pi pi-folder-open",
-            to: "/gerenciamento-processos/historico-processos",
-          },
         ],
       },
       {
@@ -94,11 +89,7 @@ export default defineComponent({
             icon: "pi pi-fw pi-file-edit",
             to: "/gestao/gestao-processo",
           },
-          {
-            label: "Auditoria",
-            icon: "pi pi-fw pi-history",
-            to: "/gestao/auditoria",
-          },
+         
         ],
       },
       {
