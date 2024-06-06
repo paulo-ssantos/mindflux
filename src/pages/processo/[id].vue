@@ -10,10 +10,10 @@
 
           <div class="w-full">
             <div class="p-4 card-w-title">
-              <h5>TabMenu</h5>
+              <!-- <h5>TabMenu</h5>
               <p>
                 Steps and TabMenu are integrated with the same child routes.
-              </p>
+              </p> -->
               <!-- <TabMenu :model="tabMenuItems"  /> -->
               <TabMenu :model="tabMenuItems" @tab-change="
                 selectTab($event.index)

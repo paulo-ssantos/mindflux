@@ -484,8 +484,8 @@ export default {
 
     <div class="col-12 md:col-6">
       <div class="card card-w-title">
-        <h5>Steps</h5>
-        <p>Steps and TabMenu are integrated with the same child routes.</p>
+        <!-- <h5>Steps</h5>
+        <p>Steps and TabMenu are integrated with the same child routes.</p> -->
         <Steps :model="nestedRouteItems" :readonly="false" />
 
         <NuxtPage />
@@ -494,8 +494,8 @@ export default {
 
     <div class="col-12 md:col-6">
       <div class="card card-w-title">
-        <h5>TabMenu</h5>
-        <p>Steps and TabMenu are integrated with the same child routes.</p>
+        <!-- <h5>TabMenu</h5>
+        <p>Steps and TabMenu are integrated with the same child routes.</p> -->
         <TabMenu :model="nestedRouteItems" />
 
         <NuxtPage />
