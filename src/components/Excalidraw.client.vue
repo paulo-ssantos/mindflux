@@ -13,7 +13,7 @@
 const props = defineProps({
   initialElements: {
     type: Array,
-    default: () => [],
+    default: () => {},
   },
   readOnly: {
     type: Boolean,
