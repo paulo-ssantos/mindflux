@@ -52,8 +52,8 @@ const dropdownItems = ref([
             />
           </ClientOnly>
           <Button
-            label="Salvar"
-            icon="pi pi-save"
+            label="Enviar"
+            icon="pi pi-envelope"
             icon-pos="right"
             class="mr-4 mt-4"
             @click="salvarprocesso"

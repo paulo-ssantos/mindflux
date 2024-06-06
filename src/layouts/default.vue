@@ -94,11 +94,6 @@ export default defineComponent({
         label: "Ajuda e Suporte",
         items: [
           {
-            label: "Documentação do Sistema",
-            icon: "pi pi-fw pi-question",
-            to: "/suporte/documentacao",
-          },
-          {
             label: "Contatar Suporte",
             icon: "pi pi-envelope",
             to: "/suporte/contatar",

@@ -73,10 +73,34 @@ async function saveCategory() {
   }
 }
 
+
+
+
+
 // * Carregando dados
 onMounted(async () => {
-  const user = await supabase.auth.getUser();
 
+  await fetchProcess();
+
+  supabase
+    .from("categorias")
+    .select()
+    .then(({ data }) => {
+      categorias.value = data;
+    });
+
+  supabase
+    .from("tags")
+    .select()
+    .then(({ data }) => {
+      allTags.value = data;
+    });
+});
+
+const fetchProcess = async () => {
+
+  const user = await supabase.auth.getUser();
+  
   supabase
     .from("processos")
     .select("*, categorias:categoria_id(*)")
@@ -111,21 +135,7 @@ onMounted(async () => {
           });
         });
     });
-
-  supabase
-    .from("categorias")
-    .select()
-    .then(({ data }) => {
-      categorias.value = data;
-    });
-
-  supabase
-    .from("tags")
-    .select()
-    .then(({ data }) => {
-      allTags.value = data;
-    });
-});
+}
 
 const initFilters = () => {
   filters.value = {
@@ -167,6 +177,69 @@ const getUser = async (userId) => {
 const clearFilter = () => {
   initFilters();
 };
+
+async function deleteProcess() {
+  try {
+    const idToDelete = selectedProcess.value.id;
+    const { error } = await supabase.from("processos").delete().eq("id", idToDelete);
+
+    if (error) {
+      throw error;
+    }
+
+    toast.add({
+      severity: "success",
+      summary: "Sucesso",
+      detail: "Processo excluído com sucesso",
+    });
+    fetchProcess();
+  } catch (error) {
+    console.error("Erro ao excluir processo:", error.message);
+    toast.add({
+      severity: "error",
+      summary: "Erro",
+      detail: "Erro ao excluir processo",
+    });
+  } finally {
+    deleteProcessoDialog.value = false;
+  }
+}
+
+async function deleteSelectedProcessos() {
+  try {
+    const idsToDelete = selectedMultipleProcess.value.map(processo => processo.id);
+    const { error } = await supabase.from("processos").delete().in("id", idsToDelete);
+
+    if (error) {
+      throw error;
+    }
+
+    toast.add({
+      severity: "success",
+      summary: "Sucesso",
+      detail: "Processos selecionados excluídas com sucesso",
+    });
+    fetchProcess();
+  } catch (error) {
+    console.error("Erro ao excluir processos selecionados:", error.message);
+    toast.add({
+      severity: "error",
+      summary: "Erro",
+      detail: "Erro ao excluir processos selecionados",
+    });
+  } finally {
+    deleteProcessoDialog.value = false;
+  }
+}
+
+function confirmDeleteProcess(processo) {
+  selectedProcess.value = processo;
+  deleteProcessoDialog.value = true;
+}
+
+function confirmDeleteSelected() {
+  deleteProcessosDialog.value = true;
+}
 </script>
 
 <template>
@@ -174,8 +247,8 @@ const clearFilter = () => {
     <div class="grid">
       <div class="col-12">
         <div class="card">
-          <h5>Admnistrar Processos</h5>
-          <p>Exclue e edite processos cadastrados no sistema.</p>
+          <h5>Gerenciar Meus Processos</h5>
+          <p> Gerencie seus processos de maneira fácil, rápida e simples.  </p>
         </div>
       </div>
     </div>
@@ -331,47 +404,53 @@ const clearFilter = () => {
             <Button
               icon="pi pi-trash"
               class="p-button-rounded p-button-warning"
-              @click="confirmDeleteUser(slotProps.data)"
+              @click="confirmDeleteProcess(slotProps.data)"
             />
           </template>
         </Column>
       </DataTable>
     </div>
 
-    <Dialog :visible="showDialog" :modal="true" :closable="false">
-      <template #header>
-        <h3>
-          {{ selectedProcess ? "Atualizar Categoria" : "Criar nova Categoria" }}
-        </h3>
-      </template>
-      <template #default>
-        <div class="p-field">
-          <label for="name"><strong>Nova Categoria:</strong></label>
-          <InputText
-            id="newCategory"
-            class="inputCSS"
-            v-model="cadastrarCategoria"
-            placeholder="Digite o nome da categoria"
-          />
-        </div>
-      </template>
 
-      <template #footer>
-        <Button
-          label="Cancelar"
-          icon="pi pi-times"
-          class="p-button-text"
-          @click="hideDialog"
-        />
-        <Button
-          label="Salvar"
-          icon="pi pi-check"
-          class="p-button-text"
-          @click="selectedProcess ? editProcess() : saveCategory()"
-        />
-      </template>
-    </Dialog>
+    <Dialog
+    v-model:visible="deleteProcessoDialog"
+    :style="{ width: '450px' }"
+    header="Confirmar exclusão"
+    :modal="true"
+  >
+    <div class="flex align-items-center justify-content-center">
+      <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+      <span v-if="selectedProcess && selectedMultipleProcess.length > 0"
+        >Tem certeza de que deseja excluir os processos selecionados?</span
+      >
+    </div>
+    <template #footer>
+      <Button
+        label="Não"
+        icon="pi pi-times"
+        class="p-button-text"
+        @click="deleteProcessoDialog = false"
+      />
+      <Button
+        label="Sim"
+        icon="pi pi-check"
+        class="p-button-text"
+        @click="deleteProcess"
+      />
+    </template>
+  </Dialog>
   </slot>
+
+  <ConfirmDialog
+      :visible="deleteProcessosDialog"
+      header="Confirmar exclusão"
+      icon="pi pi-exclamation-triangle"
+      :message="'Você tem certeza de que deseja excluir os processos selecionados?'"
+      acceptLabel="Sim"
+      rejectLabel="Não"
+      @accept="deleteSelectedProcesses"
+      @reject="() => { deleteProcessosDialog.value = false; }"
+    />
 </template>
 
 <style scoped></style>

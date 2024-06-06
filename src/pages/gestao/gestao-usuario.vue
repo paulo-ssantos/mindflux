@@ -226,7 +226,9 @@ function confirmDeleteSelected() {
 }
 
 
-
+function exportCSV(dt) {
+  dt.exportCSV();
+}
 
 onMounted(() => {
   fetchUsers();
@@ -261,7 +263,7 @@ onMounted(() => {
               label="Export"
               icon="pi pi-upload"
               class="p-button-help"
-              @click="exportCSV($event)"
+              @click="exportCSV(this.$refs.dt)"
             />
           </template>
         </Toolbar>
