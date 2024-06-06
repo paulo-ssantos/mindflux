@@ -37,7 +37,7 @@ function openEdit(user) {
 }
 
 function hideDialog() {
-  showDialog.value = false; 
+  showDialog.value = false;
   submitted.value = false;
   resetForm();
 }
@@ -65,13 +65,13 @@ async function editUser() {
 
   try {
     const { data, error } = await supabase
-      .from('users')
+      .from("users")
       .update({
         nome: cadastrarNome.value,
         email: cadastrarEmail.value,
         cargo: cadastrarCargo.value,
       })
-      .eq('id', selectedUser.value.id);
+      .eq("id", selectedUser.value.id);
 
     if (error) {
       throw error;
@@ -143,13 +143,13 @@ async function saveUser() {
 
 async function fetchUsers() {
   try {
-    const { data, error } = await supabase.from('users').select('*');
+    const { data, error } = await supabase.from("users").select("*");
 
     if (error) {
       throw error;
     }
 
-    users.value = data.map(user => ({
+    users.value = data.map((user) => ({
       ...user,
       nome: user.nome || "",
       email: user.email || "",
@@ -158,14 +158,17 @@ async function fetchUsers() {
 
     console.log("USUÁRIOS = ", users.value);
   } catch (error) {
-    console.error('Erro ao buscar usuários:', error.message);
+    console.error("Erro ao buscar usuários:", error.message);
   }
 }
 
 async function deleteUser() {
   try {
     const idToDelete = selectedUser.value.id;
-    const { error } = await supabase.from('users').delete().eq('id', idToDelete);
+    const { error } = await supabase
+      .from("users")
+      .delete()
+      .eq("id", idToDelete);
 
     if (error) {
       throw error;
@@ -191,8 +194,11 @@ async function deleteUser() {
 
 async function deleteSelectedUsers() {
   try {
-    const idsToDelete = selectedUsers.value.map(user => user.id);
-    const { error } = await supabase.from('users').delete().in('id', idsToDelete);
+    const idsToDelete = selectedUsers.value.map((user) => user.id);
+    const { error } = await supabase
+      .from("users")
+      .delete()
+      .in("id", idsToDelete);
 
     if (error) {
       throw error;
@@ -225,13 +231,9 @@ function confirmDeleteSelected() {
   deleteUsersDialog.value = true;
 }
 
-
-
-
 onMounted(() => {
   fetchUsers();
 });
-
 </script>
 
 <template>
@@ -280,11 +282,16 @@ onMounted(() => {
           responsive-layout="scroll"
         >
           <template #header>
-            <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+            <div
+              class="flex flex-column md:flex-row md:justify-content-between md:align-items-center"
+            >
               <h5 class="m-0">Gerenciar Usuário</h5>
               <span class="block mt-2 md:mt-0 p-input-icon-left">
                 <i class="pi pi-search" />
-                <InputText v-model="filters.global.value" placeholder="Procurar" />
+                <InputText
+                  v-model="filters.global.value"
+                  placeholder="Procurar"
+                />
               </span>
             </div>
           </template>
@@ -325,10 +332,10 @@ onMounted(() => {
       </div>
     </div>
   </div>
-  
+
   <Dialog :visible="showDialog" :modal="true" :closable="false">
     <template #header>
-      <h3>{{ selectedUser ? 'Atualizar Usuário' : 'Cadastro de Usuário' }}</h3>
+      <h3>{{ selectedUser ? "Atualizar Usuário" : "Cadastro de Usuário" }}</h3>
     </template>
     <template #default>
       <div class="p-field">
@@ -407,25 +414,61 @@ onMounted(() => {
     </template>
   </Dialog>
 
-  <Dialog v-model:visible="deleteUserDialog" :style="{ width: '450px' }" header="Confirmar exclusão" :modal="true">
+  <Dialog
+    v-model:visible="deleteUserDialog"
+    :style="{ width: '450px' }"
+    header="Confirmar exclusão"
+    :modal="true"
+  >
     <div class="flex align-items-center justify-content-center">
       <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-      <span v-if="selectedUser">Tem certeza de que deseja excluir o usuário <b>{{ selectedUser.nome }}</b>?</span>
+      <span v-if="selectedUser"
+        >Tem certeza de que deseja excluir o usuário
+        <b>{{ selectedUser.nome }}</b
+        >?</span
+      >
     </div>
     <template #footer>
-      <Button label="Não" icon="pi pi-times" class="p-button-text" @click="deleteUserDialog = false" />
-      <Button label="Sim" icon="pi pi-check" class="p-button-text" @click="deleteUser" />
+      <Button
+        label="Não"
+        icon="pi pi-times"
+        class="p-button-text"
+        @click="deleteUserDialog = false"
+      />
+      <Button
+        label="Sim"
+        icon="pi pi-check"
+        class="p-button-text"
+        @click="deleteUser"
+      />
     </template>
   </Dialog>
-  
-  <Dialog v-model:visible="deleteUsersDialog" :style="{ width: '450px' }" header="Confirmar exclusão" :modal="true">
+
+  <Dialog
+    v-model:visible="deleteUsersDialog"
+    :style="{ width: '450px' }"
+    header="Confirmar exclusão"
+    :modal="true"
+  >
     <div class="flex align-items-center justify-content-center">
       <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-      <span v-if="selectedUsers && selectedUsers.length > 0">Tem certeza de que deseja excluir os usuários selecionados?</span>
+      <span v-if="selectedUsers && selectedUsers.length > 0"
+        >Tem certeza de que deseja excluir os usuários selecionados?</span
+      >
     </div>
     <template #footer>
-      <Button label="Não" icon="pi pi-times" class="p-button-text" @click="deleteUsersDialog = false" />
-      <Button label="Sim" icon="pi pi-check" class="p-button-text" @click="deleteSelectedUsers" />
+      <Button
+        label="Não"
+        icon="pi pi-times"
+        class="p-button-text"
+        @click="deleteUsersDialog = false"
+      />
+      <Button
+        label="Sim"
+        icon="pi pi-check"
+        class="p-button-text"
+        @click="deleteSelectedUsers"
+      />
     </template>
   </Dialog>
 </template>

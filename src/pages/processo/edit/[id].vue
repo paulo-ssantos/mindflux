@@ -4,7 +4,8 @@
       <div class="card">
         <h5>Atualização de Processo</h5>
         <p>
-          Atualize o processo com as informações atualizadas necessárias para que seja visualizado por outros usuários.
+          Atualize o processo com as informações atualizadas necessárias para
+          que seja visualizado por outros usuários.
         </p>
 
         <div v-if="step == 0">
@@ -142,6 +143,7 @@ import { ExcalidrawStore } from "~/store/excalidrawStore";
 const supabase = useSupabaseClient();
 const toast = useToast();
 const route = useRoute();
+const router = useRouter();
 
 const processoId = ref(route.params.id);
 
@@ -300,9 +302,13 @@ const saveProcess = async () => {
     toast.add({
       severity: "success",
       summary: "Processo atualizado com sucesso",
-      detail: "Processo atualizado com sucesso",
+      detail: "Retornando para a página de processos...",
       life: 3000,
     });
+
+    setTimeout(() => {
+      router.back();
+    }, 3000);
   }
 };
 </script>
