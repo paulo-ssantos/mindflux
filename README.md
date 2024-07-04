@@ -22,7 +22,7 @@ Focusing on the backend development, it was used using Supabse ecosystem, where 
 The backend of the Mindflux system is the backbone that handles data processing and ensures seamless communication between the database and the frontend. It plays a crucial role in providing a robust and efficient knowledge management solution.
 
 ### Frontend Development
-Focusing on the backend development, we use the framework for Vue.Js, Nuxt.Js with PrimeVue. With this, we take advantage of several facilities, such as:
+Focusing on the frontend development, we use the framework for Vue.Js, Nuxt.Js with PrimeVue. With this, we take advantage of several facilities, such as:
 
 - Automatic route mapping.
 - Componetization of interfaces.
