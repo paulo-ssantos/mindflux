@@ -1,7 +1,7 @@
 #  Mindflux - Knowledge Management System
 Visit [Mindflux](https://mindflux.vercel.app) website for a live preview. 
 
-![Mindflux Card](./mindflux-card)
+![Mindflux Card](./mindflux-card.jpg)
  
 MindFlux is a web-based system designed to perform knowledge management through the management of company processes. This project was created as part of the Knowledge Management subject, under the guidance of Professor André Magalhães.
 
